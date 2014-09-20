@@ -68,9 +68,11 @@ function! PhpDocAll()
 	while search(s:php_regex_class_line, 'eW') > 0 
 		call s:PhpDocument()
 	endwhile
+	normal gg
 	while search(s:php_regex_member_line, 'eW') > 0
 		call s:PhpDocument()
 	endwhile
+	normal gg
 	while search(s:php_regex_func_line, 'eW') > 0
 		call s:PhpDocument()
 	endwhile
