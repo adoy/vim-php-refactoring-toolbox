@@ -187,16 +187,24 @@ function! PhpExtractMethod() range
 	let l:middleLine = line('.')
 	call search(s:php_regex_func_line, 'bW')
 	let l:startLine = line('.')
+	call search('(', 'W')
+	normal "pyi(
 	call search('{', 'W')
 	exec "normal! %"
 	let l:stopLine = line('.')
 	let l:beforeExtract = join(getline(l:startLine, l:middleLine-1))
 	let l:afterExtract  = join(getline(l:middleLine, l:stopLine))
 	let l:parameters = []
+	let l:parametersSignature = []
 	let l:output = []
 	for l:var in s:PhpMatchAllStr(@x, s:php_regex_local_var)
 		if match(l:beforeExtract, l:var . '\>') > 0
 			call add(l:parameters, l:var)
+			if @p =~ '[^,]*' . l:var . '\>[^,]*'
+				call add(l:parametersSignature, substitute(matchstr(@p, '[^,]*' . l:var . '\>[^,]*'), '^\s*\(.\{-}\)\s*$', '\1', 'g'))
+			else
+				call add(l:parametersSignature, l:var)
+			endif
 		endif
 		if match(l:afterExtract, l:var . '\>') > 0
 			call add(l:output, l:var)
@@ -204,16 +212,16 @@ function! PhpExtractMethod() range
 	endfor
 	normal `r
 	if len(l:output) == 0
-		exec "normal! O$this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>k=2="
+		exec "normal! O$this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>k=3="
 		let l:return = ''
 	elseif len(l:output) == 1
-		exec "normal! O" . l:output[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>k=2="
+		exec "normal! O" . l:output[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>=3="
 		let l:return = "return " . l:output[0] . ";\<CR>"
 	else
-		exec "normal! Olist(" . join(l:output, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>k=2="
+		exec "normal! Olist(" . join(l:output, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>=3="
 		let l:return = "return array(" . join(l:output, ", ") . ");\<CR>"
 	endif
-	call s:PhpInsertMethod("private", l:name, l:parameters, @x . l:return)
+	call s:PhpInsertMethod("private", l:name, l:parametersSignature, @x . l:return)
 	normal `r
 endfunction
 
