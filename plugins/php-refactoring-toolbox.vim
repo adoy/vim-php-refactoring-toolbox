@@ -175,7 +175,7 @@ endfunction
 
 function! PhpExtractMethod() range
 	let l:name = inputdialog("Name of new method: ")
-	normal mrgv"xygvd
+	normal gv"xdmr
 	let l:middleLine = line('.')
 	call search(s:php_regex_func_line, 'bW')
 	let l:startLine = line('.')
@@ -196,13 +196,13 @@ function! PhpExtractMethod() range
 	endfor
 	normal `r
 	if len(l:output) == 0
-		exec "normal! a$this->" . l:name . "(" . join(l:parameters, ", ") . ");\<CR>\<ESC>k=2="
+		exec "normal! O$this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>k=2="
 		let l:return = ''
 	elseif len(l:output) == 1
-		exec "normal! a" . l:output[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<CR>\<ESC>k=2="
+		exec "normal! O" . l:output[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>k=2="
 		let l:return = "return " . l:output[0] . ";\<CR>"
 	else
-		exec "normal! alist(" . join(l:output, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<CR>\<ESC>k=2="
+		exec "normal! Olist(" . join(l:output, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>k=2="
 		let l:return = "return array(" . join(l:output, ", ") . ");\<CR>"
 	endif
 	call s:PhpInsertMethod(l:name, l:parameters, @x . l:return)
