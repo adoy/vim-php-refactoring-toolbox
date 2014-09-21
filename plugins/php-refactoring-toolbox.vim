@@ -158,6 +158,10 @@ function! PhpExtractUse()
 endfunction
 
 function! PhpExtractConst()
+	if visualmode() != 'v'
+		call s:PhpEchoError('Extract constant only works in Visual mode, not in Visual Line or Visual block')
+		return
+	endif
 	let l:name = toupper(inputdialog("Name of new const: "))
 	normal mrgv"xy
 	call s:PhpReplaceInCurrentClass(@x, 'self::' . l:name)
@@ -174,6 +178,10 @@ function! PhpExtractClassProperty()
 endfunction
 
 function! PhpExtractMethod() range
+	if visualmode() == ''
+		call s:PhpEchoError('Extract method doesn''t works in Visual Block mode. Use Visual line or Visual mode.')
+		return
+	endif
 	let l:name = inputdialog("Name of new method: ")
 	normal gv"xdmr
 	let l:middleLine = line('.')
