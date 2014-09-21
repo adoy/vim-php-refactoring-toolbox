@@ -7,10 +7,7 @@
 " Version: 1.0.1
 "
 
-"
-" Config
-"
-
+" Config {{{
 " VIM function to call to document the current line
 if !exists('g:vim_php_refactoring_phpdoc')
 	let g:vim_php_refactoring_phpdoc = 'PhpDoc'
@@ -19,10 +16,9 @@ endif
 if !exists('g:vim_php_refactoring_use_default_mapping')
 	let g:vim_php_refactoring_use_default_mapping = 1
 endif
+" }}}
 
-"
-" Refactoring mapping
-"
+" Refactoring mapping {{{
 if g:vim_php_refactoring_use_default_mapping == 1
 	nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<CR>
 	nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<CR>
@@ -37,6 +33,7 @@ if g:vim_php_refactoring_use_default_mapping == 1
 	nnoremap <unique> <Leader>sg :call PhpCreateSettersAndGetters()<CR>
 	nnoremap <unique> <Leader>da :call PhpDocAll()<CR>
 endif
+" }}}
 
 " +--------------------------------------------------------------+
 " |   VIM REGEXP REMINDER   |    Vim Regex       |   Perl Regex   |
@@ -49,9 +46,7 @@ endif
 " | Multiline search        | \_s\_.             | \s\. multiline |
 " +--------------------------------------------------------------+
 
-"
-" Regex defintion
-"
+" Regex defintion {{{
 let s:php_regex_phptag_line = '<?\%(php\)\?'
 let s:php_regex_ns_line     = '^namespace\_s\+[\\_A-Za-z0-9]*\_s*[;{]'
 let s:php_regex_use_line    = '^use\_s\+[\\_A-Za-z0-9]\+\%(\_s\+as\_s\+[_A-Za-z0-9]\+\)\?\_s*\%(,\_s\+[\\_A-Za-z0-9]\+\%(\_s\+as\_s\+[_A-Za-z0-9]\+\)\?\_s*\)*;'
@@ -64,11 +59,9 @@ let s:php_regex_local_var   = '\$\<\%(this\>\)\@![A-Za-z0-9]*'
 let s:php_regex_assignment  = '+=\|-=\|*=\|/=\|=\~\|!=\|='
 let s:php_regex_fqcn        = '[\\_A-Za-z0-9]*'
 let s:php_regex_cn          = '[_A-Za-z0-9]\+$'
+" }}}
 
-"
-" Refactoring functions
-"
-function! PhpDocAll()
+function! PhpDocAll() " {{{
 	if exists("*" . g:vim_php_refactoring_phpdoc) == 0
 		call s:PhpEchoError(g:vim_php_refactoring_phpdoc . '() vim function doesn''t exists.')
 		return
@@ -87,8 +80,9 @@ function! PhpDocAll()
 	endwhile
 	normal `a
 endfunction
+" }}}
 
-function! PhpCreateSettersAndGetters()
+function! PhpCreateSettersAndGetters() " {{{
 	normal gg
 	let l:properties = []
 	while search(s:php_regex_member_line, 'eW') > 0
@@ -109,8 +103,9 @@ function! PhpCreateSettersAndGetters()
 		endif
 	endfor
 endfunction
+" }}}
 
-function! PhpRenameLocalVariable()
+function! PhpRenameLocalVariable() " {{{
     let l:oldName = expand('<cword>')
     let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
 	if s:PhpSearchInCurrentFunction('$' . l:newName . '\>', 'n') > 0
@@ -121,8 +116,9 @@ function! PhpRenameLocalVariable()
 	endif
 	call s:PhpReplaceInCurrentFunction('$' . l:oldName . '\>', '$' . l:newName)
 endfunction
+" }}}
 
-function! PhpRenameClassVariable()
+function! PhpRenameClassVariable() " {{{
 	let l:oldName = expand('<cword>')
     let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
 	if s:PhpSearchInCurrentClass('\%(\%(\%(public\|protected\|private\|static\)\_s\+\)\+\$\|$this->\)\@<=' . l:newName . '\>', 'n') > 0
@@ -133,8 +129,9 @@ function! PhpRenameClassVariable()
 	endif
 	call s:PhpReplaceInCurrentClass('\%(\%(\%(public\|protected\|private\|static\)\_s\+\)\+\$\|$this->\)\@<=' . l:oldName . '\>', l:newName)
 endfunction
+" }}}
 
-function! PhpRenameMethod()
+function! PhpRenameMethod() " {{{
 	let l:oldName = expand('<cword>')
 	let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
 	if s:PhpSearchInCurrentClass('\%(\%(' . s:php_regex_func_line . '\)\|$this->\)\@<=' . l:newName . '\>', 'n') > 0
@@ -145,8 +142,9 @@ function! PhpRenameMethod()
 	endif
 	call s:PhpReplaceInCurrentClass('\%(\%(' . s:php_regex_func_line . '\)\|$this->\)\@<=' . l:oldName . '\>', l:newName)
 endfunction
+" }}}
 
-function! PhpExtractUse()
+function! PhpExtractUse() " {{{
 	normal mr
 	let l:fqcn = s:PhpGetFQCNUnderCursor()
 	let l:use  = s:PhpGetDefaultUse(l:fqcn)
@@ -164,8 +162,9 @@ function! PhpExtractUse()
 	endif
 	normal `r
 endfunction
+" }}}
 
-function! PhpExtractConst()
+function! PhpExtractConst() " {{{
 	if visualmode() != 'v'
 		call s:PhpEchoError('Extract constant only works in Visual mode, not in Visual Line or Visual block')
 		return
@@ -176,16 +175,18 @@ function! PhpExtractConst()
 	call s:PhpInsertConst(l:name, @x)
 	normal `r
 endfunction
+" }}}
 
-function! PhpExtractClassProperty()
+function! PhpExtractClassProperty() " {{{
     normal mr
     let l:name = expand('<cword>')
 	call s:PhpReplaceInCurrentFunction('$' . l:name . '\>', '$this->' . l:name)
 	call s:PhpInsertProperty(l:name, "private")
     normal `r
 endfunction
+" }}}
 
-function! PhpExtractMethod() range
+function! PhpExtractMethod() range " {{{
 	if visualmode() == ''
 		call s:PhpEchoError('Extract method doesn''t works in Visual Block mode. Use Visual line or Visual mode.')
 		return
@@ -232,13 +233,15 @@ function! PhpExtractMethod() range
 	call s:PhpInsertMethod("private", l:name, l:parametersSignature, @x . l:return)
 	normal `r
 endfunction
+" }}}
 
-function! PhpCreateProperty()
+function! PhpCreateProperty() " {{{
 	let l:name = inputdialog("Name of new property: ")
 	call s:PhpInsertProperty(l:name, "private")
 endfunction
+" }}}
 
-function! PhpDetectUnusedUseStatements()
+function! PhpDetectUnusedUseStatements() " {{{
 	normal mrgg
 	while search('^use', 'W')
 		let l:startLine = line('.')
@@ -255,13 +258,14 @@ function! PhpDetectUnusedUseStatements()
 	endwhile
 	normal `r
 endfunction
+" }}}
 
+function! PhpAlignAssigns() range " {{{
 " This funcion was took from :
 " Vim refactoring plugin
 " Maintainer: Eustaquio 'TaQ' Rangel
 " License: GPL
 " URL: git://github.com/taq/vim-refact.git
-function! PhpAlignAssigns() range
 	let l:max   = 0
 	let l:maxo  = 0
 	let l:linc  = ""
@@ -283,19 +287,18 @@ function! PhpAlignAssigns() range
 		call setline(l:line,l:newline)
 	endfor
 endfunction
+" }}}
 
-"
-" Refactoring toolbox functions
-"
-function! s:PhpDocument()
+function! s:PhpDocument() " {{{
 	if match(getline(line('.')-1), "*/") == -1
 		normal mr
 		exec "call " . g:vim_php_refactoring_phpdoc . '()'
 		normal `r
 	endif
 endfunction
+" }}}
 
-function! s:PhpReplaceInCurrentFunction(search, replace)
+function! s:PhpReplaceInCurrentFunction(search, replace) " {{{
 	normal mr
 	call search(s:php_regex_func_line, 'bW')
     let l:startLine = line('.')
@@ -305,8 +308,9 @@ function! s:PhpReplaceInCurrentFunction(search, replace)
     exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. a:replace .'/ge'
 	normal `r
 endfunction
+" }}}
 
-function! s:PhpReplaceInCurrentClass(search, replace)
+function! s:PhpReplaceInCurrentClass(search, replace) " {{{
 	normal mr
 	call search(s:php_regex_class_line, 'beW')
     call search('{', 'W')
@@ -316,8 +320,9 @@ function! s:PhpReplaceInCurrentClass(search, replace)
 	exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. a:replace .'/ge'
 	normal `r
 endfunction
+" }}}
 
-function! s:PhpInsertUseStatement(use)
+function! s:PhpInsertUseStatement(use) " {{{
 	let l:use = 'use ' . substitute(a:use, '^\\', '', '') . ';'
 	if search(s:php_regex_use_line, 'beW') > 0
 		call append(line('.'), l:use)
@@ -331,8 +336,9 @@ function! s:PhpInsertUseStatement(use)
 		call append(1, l:use)
 	endif
 endfunction
+" }}}
 
-function! s:PhpInsertConst(name, value)
+function! s:PhpInsertConst(name, value) " {{{
 	if search(s:php_regex_const_line, 'beW') > 0
 		call append(line('.'), 'const ' . a:name . ' = ' . a:value . ';')
 	elseif search(s:php_regex_class_line, 'beW') > 0
@@ -344,8 +350,9 @@ function! s:PhpInsertConst(name, value)
 	endif
 	normal j=1=
 endfunction
+" }}}
 
-function! s:PhpInsertProperty(name, visibility)
+function! s:PhpInsertProperty(name, visibility) " {{{
 	if search(s:php_regex_member_line, 'beW') > 0
 		let l:insertLine = line('.')+1
 	elseif search(s:php_regex_const_line, 'beW') > 0
@@ -363,38 +370,44 @@ function! s:PhpInsertProperty(name, visibility)
 	call append(l:insertLine+4, "")
 	normal j=5=
 endfunction
+" }}}
 
-function! s:PhpInsertMethod(modifiers, name, params, impl)
+function! s:PhpInsertMethod(modifiers, name, params, impl) " {{{
 	call search(s:php_regex_func_line, 'beW')
 	call search('{', 'W')
 	exec "normal! %"
 	exec "normal! o\<CR>" . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")\<CR>{\<CR>" . a:impl . "}\<Esc>=a{"
 endfunction
+" }}}
 
-function! s:PhpGetFQCNUnderCursor()
+function! s:PhpGetFQCNUnderCursor() " {{{
 	let l:line = getbufline("%", line('.'))[0]
 	let l:lineStart = strpart(l:line, 0, col('.'))
 	let l:lineEnd   = strpart(l:line, col('.'), strlen(l:line) - col('.'))
 	return matchstr(l:lineStart, s:php_regex_fqcn . '$') . matchstr(l:lineEnd, '^' . s:php_regex_fqcn)
 endfunction
+" }}}
 
-function! s:PhpGetShortClassName(fqcn)
+function! s:PhpGetShortClassName(fqcn) " {{{
 	return matchstr(a:fqcn, s:php_regex_cn)
 endfunction
+" }}}
 
-function! s:PhpGetDefaultUse(fqcn)
+function! s:PhpGetDefaultUse(fqcn) " {{{
 	return inputdialog("Use as [Default: " . s:PhpGetShortClassName(a:fqcn) ."] : ")
 endfunction
+" }}}
 
-function! s:PhpPopList(list)
+function! s:PhpPopList(list) " {{{
 	for l:elem in reverse(a:list)
 		if strlen(l:elem) > 0
 			return l:elem
 		endif
 	endfor
 endfunction
+" }}}
 
-function! s:PhpSearchInCurrentFunction(pattern, flags)
+function! s:PhpSearchInCurrentFunction(pattern, flags) " {{{
 	normal mr
 	call search(s:php_regex_func_line, 'bW')
     let l:startLine = line('.')
@@ -404,8 +417,9 @@ function! s:PhpSearchInCurrentFunction(pattern, flags)
 	normal `r
 	return s:PhpSearchInRange(a:pattern, a:flags, l:startLine, l:stopLine)
 endfunction
+" }}}
 
-function! s:PhpSearchInCurrentClass(pattern, flags)
+function! s:PhpSearchInCurrentClass(pattern, flags) " {{{
 	normal mr
 	call search(s:php_regex_class_line, 'beW')
     call search('{', 'W')
@@ -415,12 +429,14 @@ function! s:PhpSearchInCurrentClass(pattern, flags)
 	normal `r
 	return s:PhpSearchInRange(a:pattern, a:flags, l:startLine, l:stopLine)
 endfunction
+" }}}
 
-function! s:PhpSearchInRange(pattern, flags, startLine, endLine)
+function! s:PhpSearchInRange(pattern, flags, startLine, endLine) " {{{
 	return search('\%>' . a:startLine . 'l\%<' . a:endLine . 'l' . a:pattern, a:flags)
 endfunction
+" }}}
 
-function! s:PhpMatchAllStr(haystack, needle)
+function! s:PhpMatchAllStr(haystack, needle) " {{{
 	let l:result = []
 	let l:matchPos = match(a:haystack, a:needle, 0)
 	while l:matchPos > 0
@@ -432,9 +448,11 @@ function! s:PhpMatchAllStr(haystack, needle)
 	endwhile
 	return l:result
 endfunction
+" }}}
 
-function! s:PhpEchoError(message)
+function! s:PhpEchoError(message) " {{{
 	echohl ErrorMsg
 	echomsg a:message
 	echohl NONE
 endfunction
+" }}}
