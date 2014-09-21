@@ -18,7 +18,7 @@ PHP Refactoring Toolbox for VIM
 
 Copy the `php-refactoring-toolbox.vim` in your `~/.vim/plugin` folder.
 
-If you want to disable the default mapping juste add this line in your `~/.vimrc` file 
+If you want to disable the default mapping just add this line in your `~/.vimrc` file 
 
 ```
 let g:vim_php_refactoring_use_default_mapping = 0
