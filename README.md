@@ -14,15 +14,22 @@ PHP Refactoring Toolbox for VIM
 
 ## Mappings
 
-    nnoremap <unique> <Leader>rlv :call <SID>PhpRenameLocalVariable()<CR>
-    nnoremap <unique> <Leader>rcv :call <SID>PhpRenameClassVariable()<CR>
-    nnoremap <unique> <Leader>eu :call <SID>PhpExtractUse()<CR>
-    vnoremap <unique> <Leader>ec :call <SID>PhpExtractConst()<CR>
-    nnoremap <unique> <Leader>ep :call <SID>PhpExtractClassProperty()<CR>
-    vnoremap <unique> <Leader>em :call <SID>PhpExtractMethod()<CR>
-    nnoremap <unique> <Leader>np :call <SID>PhpCreateProperty()<CR>
-    nnoremap <unique> <Leader>du :call <SID>PhpDetectUnusedUseStatements()<CR>
-    vnoremap <unique> <Leader>== :call <SID>PhpAlignAssigns()<CR>
+    nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<CR>
+    nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<CR>
+    nnoremap <unique> <Leader>rm :call PhpRenameMethod()<CR>
+    nnoremap <unique> <Leader>eu :call PhpExtractUse()<CR>
+    vnoremap <unique> <Leader>ec :call PhpExtractConst()<CR>
+    nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<CR>
+    vnoremap <unique> <Leader>em :call PhpExtractMethod()<CR>
+    nnoremap <unique> <Leader>np :call PhpCreateProperty()<CR>
+    nnoremap <unique> <Leader>du :call PhpDetectUnusedUseStatements()<CR>
+    vnoremap <unique> <Leader>== :call PhpAlignAssigns()<CR>
+    nnoremap <unique> <Leader>sg :call PhpCreateSettersAndGetters()<CR>
+    nnoremap <unique> <Leader>da :call PhpDocAll()<CR>
+
+## Playground.php
+
+You'll find in this project a `playground.php` file. You can use this file to start playing with this refactoring plugin.
 
 ## Examples
 
@@ -98,20 +105,128 @@ $obj2 = Baz;
 
 ### Extract Class Property
 
-`<Leader>ep` in normal mode (More detailed doc sonn)
+``` php
+<?php
+
+class Dir {
+    public function __construct($path) {
+        $realpath = $path;
+    }       ↑
+}
+```
+
+`<Leader>ep` in normal mode will extract the local variable and create a property inside the current class.
+
+``` php
+<?php
+
+class Dir {
+    private $realpath;
+    public function __construct($path) {
+        $this->realpath = $path;
+    }       ↑
+}
+```
 
 ### Extract Method
 
-`<Leader>em` in visual mode (More detailed doc soon)
+``` php
+<?php
+
+class HelloWorld {
+    public function sayHello($firstName = null) {
+        $sentence = 'Hello';                  
+        if ($firstName) {                     
+            $sentence .= ' ' . $firstName;
+        }
+        echo $sentence;
+    }
+}
+```
+
+Select in visual mode (V) the code you want to extract in an other method and hit `<Leader>em`.
+You'll be prompted for a method name. Enter a method name and press enter
+
+``` php
+<?php
+
+class HelloWorld {
+    public function sayHello($firstName = null) {
+        $sentence = $this->prepareSentence($firstName);
+        echo $sentence;
+    }
+
+    private function prepareSentence($firstName)
+    {
+        $sentence = 'Hello';                
+        if ($firstName) {
+            $sentence .= ' ' . $firstName;
+        }
+        return $sentence;
+    }
+}
+```
 
 ### Create Property
 
-`<Leader>np` in normal mode (More detailed doc soon)
+`<Leader>np` will create a new property in your current class.
 
 ### Detect unused "use" statements
 
-`<Leader>du` in normal mode (More detailed doc soon)
+`<Leader>du` will detect all unused "use" statements in your code so that you can remove them.
 
 ### Align assignments
 
-`<Leader>==` in visual mode (More detailed doc soon)
+``` php
+<?php
+
+$oneVar = 'Foo';
+$anOtherVar = 'Bar';
+$oneVar += 'Baz';
+```
+
+Select the code you want to align and then hit `<Leader>==`
+
+``` php
+<?php
+
+$oneVar     =  'Foo';
+$anOtherVar =  'Bar';
+$oneVar     += 'Baz';
+```
+
+### Create setters and getters
+
+``` php
+<?php
+
+class Foo {
+    private $bar;
+}
+```
+
+Hit `<Leader>sg` and you'll be prompted if you want to create setters and getters for existing properties.
+
+``` php
+<?php
+
+class Foo {
+    private $bar;
+
+    public function setBar($bar)
+    {
+        $this->bar = $bar;
+    }
+
+    public function getBar()
+    {
+        return $this->bar;
+    }
+}
+```
+
+### Document all
+
+`<Leader>da` will call your documentation plugin (by default Php Documentor for vim https://github.com/tobyS/pdv) for every uncommented classes, methods, functions and properties.
+
+
