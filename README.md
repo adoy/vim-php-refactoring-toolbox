@@ -4,6 +4,7 @@ PHP Refactoring Toolbox for VIM
 
 * Rename Local Variable
 * Rename Class Variable
+* Rename Method
 * Extract Use
 * Extract Const
 * Extract Class Property
