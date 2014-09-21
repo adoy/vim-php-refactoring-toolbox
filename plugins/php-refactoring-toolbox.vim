@@ -12,23 +12,31 @@
 "
 
 " VIM function to call to document the current line
-let g:adoy_vim_php_refactoring_phpdoc = 'PhpDoc'
+if !exists('g:vim_php_refactoring_phpdoc')
+	let g:vim_php_refactoring_phpdoc = 'PhpDoc'
+endif
+
+if !exists('g:vim_php_refactoring_use_default_mapping')
+	let g:vim_php_refactoring_use_default_mapping = 1
+endif
 
 "
 " Refactoring mapping
 "
-nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<CR>
-nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<CR>
-nnoremap <unique> <Leader>rm :call PhpRenameMethod()<CR>
-nnoremap <unique> <Leader>eu :call PhpExtractUse()<CR>
-vnoremap <unique> <Leader>ec :call PhpExtractConst()<CR>
-nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<CR>
-vnoremap <unique> <Leader>em :call PhpExtractMethod()<CR>
-nnoremap <unique> <Leader>np :call PhpCreateProperty()<CR>
-nnoremap <unique> <Leader>du :call PhpDetectUnusedUseStatements()<CR>
-vnoremap <unique> <Leader>== :call PhpAlignAssigns()<CR>
-nnoremap <unique> <Leader>sg :call PhpCreateSettersAndGetters()<CR>
-nnoremap <unique> <Leader>da :call PhpDocAll()<CR>
+if g:vim_php_refactoring_use_default_mapping == 1
+	nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<CR>
+	nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<CR>
+	nnoremap <unique> <Leader>rm :call PhpRenameMethod()<CR>
+	nnoremap <unique> <Leader>eu :call PhpExtractUse()<CR>
+	vnoremap <unique> <Leader>ec :call PhpExtractConst()<CR>
+	nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<CR>
+	vnoremap <unique> <Leader>em :call PhpExtractMethod()<CR>
+	nnoremap <unique> <Leader>np :call PhpCreateProperty()<CR>
+	nnoremap <unique> <Leader>du :call PhpDetectUnusedUseStatements()<CR>
+	vnoremap <unique> <Leader>== :call PhpAlignAssigns()<CR>
+	nnoremap <unique> <Leader>sg :call PhpCreateSettersAndGetters()<CR>
+	nnoremap <unique> <Leader>da :call PhpDocAll()<CR>
+endif
 
 " +--------------------------------------------------------------+
 " |   VIM REGEXP REMINDER   |    Vim Regex       |   Perl Regex   |
@@ -61,8 +69,8 @@ let s:php_regex_cn          = '[_A-Za-z0-9]\+$'
 " Refactoring functions
 "
 function! PhpDocAll()
-	if exists("*" . g:adoy_vim_php_refactoring_phpdoc) == 0
-		call s:PhpEchoError(g:adoy_vim_php_refactoring_phpdoc . '() vim function doesn''t exists.')
+	if exists("*" . g:vim_php_refactoring_phpdoc) == 0
+		call s:PhpEchoError(g:vim_php_refactoring_phpdoc . '() vim function doesn''t exists.')
 		return
 	endif
 	normal magg
@@ -282,7 +290,7 @@ endfunction
 function! s:PhpDocument()
 	if match(getline(line('.')-1), "*/") == -1
 		normal mr
-		exec "call " . g:adoy_vim_php_refactoring_phpdoc . '()'
+		exec "call " . g:vim_php_refactoring_phpdoc . '()'
 		normal `r
 	endif
 endfunction
