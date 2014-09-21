@@ -11,8 +11,20 @@ PHP Refactoring Toolbox for VIM
 * Create Property
 * Detect Unused Use Statements
 * Align Assigns
+* Create setters and getters
+* Document all code
 
-## Mappings
+## Installation 
+
+Copy the `php-refactoring-toolbox.vim` in your `~/.vim/plugin` folder.
+
+If you want to disable the default mapping juste add this line in your `~/.vimrc` file 
+
+```
+let g:vim_php_refactoring_use_default_mapping = 0
+```
+
+## Default Mappings
 
     nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<CR>
     nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<CR>
