@@ -94,10 +94,10 @@ function! PhpCreateSettersAndGetters()
 			continue
 		endif
 		if search(s:php_regex_func_line . "set" . l:camelCaseName . '\>', 'n') == 0
-			call s:PhpInsertMethod("set" . l:camelCaseName, ['$' . substitute(l:property, '^_', '', '') ], "$this->" . l:property . " = $" . substitute(l:property, '^_', '', '') . ";\n")
+			call s:PhpInsertMethod("public", "set" . l:camelCaseName, ['$' . substitute(l:property, '^_', '', '') ], "$this->" . l:property . " = $" . substitute(l:property, '^_', '', '') . ";\n")
 		endif
 		if search(s:php_regex_func_line . "get" . l:camelCaseName . '\>', 'n') == 0
-			call s:PhpInsertMethod("get" . l:camelCaseName, [], "return $this->" . l:property . ";\n")
+			call s:PhpInsertMethod("public", "get" . l:camelCaseName, [], "return $this->" . l:property . ";\n")
 		endif
 	endfor
 endfunction
@@ -213,7 +213,7 @@ function! PhpExtractMethod() range
 		exec "normal! Olist(" . join(l:output, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>k=2="
 		let l:return = "return array(" . join(l:output, ", ") . ");\<CR>"
 	endif
-	call s:PhpInsertMethod(l:name, l:parameters, @x . l:return)
+	call s:PhpInsertMethod("private", l:name, l:parameters, @x . l:return)
 	normal `r
 endfunction
 
@@ -348,11 +348,11 @@ function! s:PhpInsertProperty(name, visibility)
 	normal j=5=
 endfunction
 
-function! s:PhpInsertMethod(name, params, impl)
+function! s:PhpInsertMethod(modifiers, name, params, impl)
 	call search(s:php_regex_func_line, 'beW')
 	call search('{', 'W')
 	exec "normal! %"
-	exec "normal! o\<CR>private function " . a:name . "(" . join(a:params, ", ") . ")\<CR>{\<CR>" . a:impl . "}\<Esc>=a{"
+	exec "normal! o\<CR>" . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")\<CR>{\<CR>" . a:impl . "}\<Esc>=a{"
 endfunction
 
 function! s:PhpGetFQCNUnderCursor()
