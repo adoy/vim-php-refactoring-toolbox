@@ -100,7 +100,7 @@ class Playground
     }
 
     /**
-     * Select the inner function block vi{
+     * Select the inner function block
      * and press <Leader>== to align all assignements
      */
     public function testAlignAssigns()
