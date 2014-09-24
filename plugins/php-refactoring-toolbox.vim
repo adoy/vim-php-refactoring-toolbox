@@ -106,7 +106,7 @@ endfunction
 " }}}
 
 function! PhpRenameLocalVariable() " {{{
-    let l:oldName = expand('<cword>')
+    let l:oldName = substitute(expand('<cword>'), '^\$*', '', '')
     let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
     if s:PhpSearchInCurrentFunction('$' . l:newName . '\>', 'n') > 0
         call s:PhpEchoError('$' . l:newName . ' seems to already exist in the current function scope. Replace anyway ?')
