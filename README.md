@@ -17,7 +17,11 @@ PHP Refactoring Toolbox for VIM
 
 ## Installation 
 
-Copy the `php-refactoring-toolbox.vim` in your `~/.vim/plugin` folder.
+* [vim-plug](https://github.com/junegunn/vim-plug): `Plug 'adoy/vim-php-refactoring-toolbox'`
+* [vundle](https://github.com/gmarik/Vundle.vim): `Plugin 'adoy/vim-php-refactoring-toolbox'`
+* [pathogen](https://github.com/tpope/vim-pathogen): `git clone https://github.com/adoy/vim-php-refactoring-toolbox.git ~/.vim/bundle/`
+* or just copy the `plugin/php-refactoring-toolbox.vim` in your `~/.vim/plugin` folder
+
 
 If you want to disable the default mapping just add this line in your `~/.vimrc` file 
 
