@@ -353,30 +353,27 @@ endfunction
 " }}}
 
 function! s:PhpInsertProperty(name, visibility) " {{{
-	let l:regex = '\%(' . join([s:php_regex_member_line, s:php_regex_const_line, s:php_regex_class_line], '\)\|\(') .'\)'
-	if search(l:regex, 'beW') > 0
-		let l:line = getbufline("%", line('.'))[0]
-		if match(l:line, s:php_regex_class_line) > -1
-        	call search('{', 'W')
-			call append(line('.'), "")
-			let l:insertLine = line('.')
-		else 
-			call append(line('.'), "")
-			let l:insertLine = line('.') + 1
-		endif
-	else 
-		call append(line('.'), "")
-		let l:insertLine = line('.')
-	endif
-	call s:PhpInsertPropertyExtended(a:name, a:visibility, l:insertLine)
+    let l:regex = '\%(' . join([s:php_regex_member_line, s:php_regex_const_line, s:php_regex_class_line], '\)\|\(') .'\)'
+    if search(l:regex, 'beW') > 0
+        let l:line = getbufline("%", line('.'))[0]
+        if match(l:line, s:php_regex_class_line) > -1
+            call search('{', 'W')
+            call s:PhpInsertPropertyExtended(a:name, a:visibility, line('.'), 0)
+        else 
+            call s:PhpInsertPropertyExtended(a:name, a:visibility, line('.'), 1)
+        endif
+    else 
+        call s:PhpInsertPropertyExtended(a:name, a:visibility, line('.'), 0)
+    endif
 endfunction
 " }}}
 
-function! s:PhpInsertPropertyExtended(name, visibility, insertLine) " {{{
-    call append(a:insertLine, '/**')
-    call append(a:insertLine+1, '* @var mixed')
-    call append(a:insertLine+2, '*/')
-    call append(a:insertLine+3, a:visibility . " $" . a:name . ';')
+function! s:PhpInsertPropertyExtended(name, visibility, insertLine, emptyLineBefore) " {{{
+    call append(a:insertLine, '')
+    call append(a:insertLine + a:emptyLineBefore, '/**')
+    call append(a:insertLine + a:emptyLineBefore + 1, '* @var mixed')
+    call append(a:insertLine + a:emptyLineBefore + 2, '*/')
+    call append(a:insertLine + a:emptyLineBefore + 3, a:visibility . " $" . a:name . ';')
     normal j=5=
 endfunction
 " }}}
