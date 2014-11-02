@@ -4,7 +4,7 @@
 " Maintainer: Pierrick Charron <pierrick@adoy.net>
 " URL: https://github.com/adoy/vim-php-refactoring-toolbox
 " License: MIT
-" Version: 1.0.1
+" Version: 1.0.2
 "
 
 " Config {{{
@@ -353,21 +353,30 @@ endfunction
 " }}}
 
 function! s:PhpInsertProperty(name, visibility) " {{{
-    if search(s:php_regex_member_line, 'beW') > 0
-        let l:insertLine = line('.')+1
-    elseif search(s:php_regex_const_line, 'beW') > 0
-        let l:insertLine = line('.')+1
-    elseif search(s:php_regex_class_line, 'beW') > 0
-        call search('{', 'W')
-        let l:insertLine = line('.')
-    else
-        let l:insertLine = line('.')
-    endif
-    call append(l:insertLine, '/**')
-    call append(l:insertLine+1, '* @var mixed')
-    call append(l:insertLine+2, '*/')
-    call append(l:insertLine+3, a:visibility . " $" . a:name . ';')
-    call append(l:insertLine+4, "")
+	let l:regex = '\%(' . join([s:php_regex_member_line, s:php_regex_const_line, s:php_regex_class_line], '\)\|\(') .'\)'
+	if search(l:regex, 'beW') > 0
+		let l:line = getbufline("%", line('.'))[0]
+		if match(l:line, s:php_regex_class_line) > -1
+        	call search('{', 'W')
+			call append(line('.'), "")
+			let l:insertLine = line('.')
+		else 
+			call append(line('.'), "")
+			let l:insertLine = line('.') + 1
+		endif
+	else 
+		call append(line('.'), "")
+		let l:insertLine = line('.')
+	endif
+	call s:PhpInsertPropertyExtended(a:name, a:visibility, l:insertLine)
+endfunction
+" }}}
+
+function! s:PhpInsertPropertyExtended(name, visibility, insertLine) " {{{
+    call append(a:insertLine, '/**')
+    call append(a:insertLine+1, '* @var mixed')
+    call append(a:insertLine+2, '*/')
+    call append(a:insertLine+3, a:visibility . " $" . a:name . ';')
     normal j=5=
 endfunction
 " }}}
