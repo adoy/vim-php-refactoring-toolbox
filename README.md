@@ -100,6 +100,28 @@ class HelloWorld {
 }
 ```
 
+### Rename method
+
+``` php
+<?php
+class HelloWorld {
+    public function sayHello() {
+        echo $this->sayHello();
+    }                 ↑
+}
+```
+
+`<Leader>rm` in normal mode, specify the new method name
+
+``` php
+<?php
+class HelloWorld {
+    public function newMethodName() {
+        echo $this->newMethodName();
+    }                 ↑
+}
+```
+
 ### Extract Use Statement
 
 ``` php
