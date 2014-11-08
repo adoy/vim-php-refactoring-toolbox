@@ -31,6 +31,15 @@ class Playground
     }
 
     /**
+     * Place your cursor on a method name and press <Leader>rm
+     * to rename a method
+     */
+    public function testRenameMethod()
+    {
+        $this->testRenameMethod();
+    }
+
+    /**
      * Place your cursor on a Fully qualified class name and press <Leader>eu
      * to create an alias and place the new Use statement on top of the file
      */
