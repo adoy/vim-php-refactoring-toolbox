@@ -16,6 +16,10 @@ endif
 if !exists('g:vim_php_refactoring_use_default_mapping')
     let g:vim_php_refactoring_use_default_mapping = 1
 endif
+
+if !exists('g:vim_php_refactoring_auto_validate')
+    let g:vim_php_refactoring_auto_validate = 0
+endif
 " }}}
 
 " Refactoring mapping {{{
@@ -92,8 +96,10 @@ function! PhpCreateSettersAndGetters() " {{{
     for l:property in l:properties
         let l:camelCaseName = substitute(l:property, '^_\?\(.\)', '\U\1', '')
         call s:PhpEchoError('Create set' . l:camelCaseName . '() and get' . l:camelCaseName . '()')
-        if inputlist(["0. No", "1. Yes"]) == 0
-            continue
+        if g:vim_php_refactoring_auto_validate == 0
+            if inputlist(["0. No", "1. Yes"]) == 0
+                continue
+            endif
         endif
         if search(s:php_regex_func_line . "set" . l:camelCaseName . '\>', 'n') == 0
             call s:PhpInsertMethod("public", "set" . l:camelCaseName, ['$' . substitute(l:property, '^_', '', '') ], "$this->" . l:property . " = $" . substitute(l:property, '^_', '', '') . ";\n")
