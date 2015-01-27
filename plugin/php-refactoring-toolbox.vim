@@ -86,7 +86,7 @@ function! PhpCreateSettersAndGetters() " {{{
     normal gg
     let l:properties = []
     while search(s:php_regex_member_line, 'eW') > 0
-        normal w"xyw
+        normal w"xye
         call add(l:properties, @x)
     endwhile
     for l:property in l:properties
