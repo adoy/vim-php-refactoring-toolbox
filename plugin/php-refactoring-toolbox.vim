@@ -196,6 +196,10 @@ function! PhpExtractMethod() range " {{{
         return
     endif
     let l:name = inputdialog("Name of new method: ")
+    let l:visibility = inputdialog("Visibility (default is private): ")
+    if empty(l:visibility)
+        let l:visibility =  'private'
+    endif
     normal gv"xdmr
     let l:middleLine = line('.')
     call search(s:php_regex_func_line, 'bW')
@@ -234,7 +238,7 @@ function! PhpExtractMethod() range " {{{
         exec "normal! Olist(" . join(l:output, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>=3="
         let l:return = "return array(" . join(l:output, ", ") . ");\<CR>"
     endif
-    call s:PhpInsertMethod("private", l:name, l:parametersSignature, @x . l:return)
+    call s:PhpInsertMethod(l:visibility, l:name, l:parametersSignature, @x . l:return)
     normal `r
 endfunction
 " }}}
