@@ -181,7 +181,11 @@ function! PhpExtractClassProperty() " {{{
     normal mr
     let l:name = expand('<cword>')
     call s:PhpReplaceInCurrentFunction('$' . l:name . '\>', '$this->' . l:name)
-    call s:PhpInsertProperty(l:name, "private")
+    let l:visibility = inputdialog("Visibility (default is private): ")
+    if empty(l:visibility)
+        let l:visibility =  'private'
+    endif
+    call s:PhpInsertProperty(l:name, l:visibility)
     normal `r
 endfunction
 " }}}
@@ -237,7 +241,11 @@ endfunction
 
 function! PhpCreateProperty() " {{{
     let l:name = inputdialog("Name of new property: ")
-    call s:PhpInsertProperty(l:name, "private")
+    let l:visibility = inputdialog("Visibility (default is private): ")
+    if empty(l:visibility)
+        let l:visibility =  'private'
+    endif
+    call s:PhpInsertProperty(l:name, l:visibility)
 endfunction
 " }}}
 
