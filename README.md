@@ -15,7 +15,7 @@ PHP Refactoring Toolbox for VIM
 * Create setters and getters
 * Document all code
 
-## Installation 
+## Installation
 
 * [vim-plug](https://github.com/junegunn/vim-plug): `Plug 'adoy/vim-php-refactoring-toolbox'`
 * [vundle](https://github.com/gmarik/Vundle.vim): `Plugin 'adoy/vim-php-refactoring-toolbox'`
@@ -23,7 +23,7 @@ PHP Refactoring Toolbox for VIM
 * or just copy the `plugin/php-refactoring-toolbox.vim` in your `~/.vim/plugin` folder
 
 
-If you want to disable the default mapping just add this line in your `~/.vimrc` file 
+If you want to disable the default mapping just add this line in your `~/.vimrc` file
 
 ```
 let g:vim_php_refactoring_use_default_mapping = 0
@@ -34,6 +34,13 @@ If you want to disable the user validation at the getter/setter creation, just a
 ```
 let g:vim_php_refactoring_auto_validate_sg = 1
 ```
+
+If you want to disable the user validation for all rename features, just add this line in your  `~/.vimrc` file
+
+```
+let g:vim_php_refactoring_auto_validate_rename = 1
+```
+
 
 ## Default Mappings
 
@@ -180,8 +187,8 @@ class Dir {
 
 class HelloWorld {
     public function sayHello($firstName = null) {
-        $sentence = 'Hello';                  
-        if ($firstName) {                     
+        $sentence = 'Hello';
+        if ($firstName) {
             $sentence .= ' ' . $firstName;
         }
         echo $sentence;
@@ -203,7 +210,7 @@ class HelloWorld {
 
     private function prepareSentence($firstName)
     {
-        $sentence = 'Hello';                
+        $sentence = 'Hello';
         if ($firstName) {
             $sentence .= ' ' . $firstName;
         }

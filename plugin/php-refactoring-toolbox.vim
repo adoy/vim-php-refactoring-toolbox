@@ -22,7 +22,11 @@ if !exists('g:vim_php_refactoring_auto_validate')
 endif
 
 if !exists('g:vim_php_refactoring_auto_validate_sg')
-	let g:vim_php_refactoring_auto_validate_sg = g:vim_php_refactoring_auto_validate
+    let g:vim_php_refactoring_auto_validate_sg = g:vim_php_refactoring_auto_validate
+endif
+
+if !exists('g:vim_php_refactoring_auto_validate_rename')
+    let g:vim_php_refactoring_auto_validate_rename = g:vim_php_refactoring_auto_validate
 endif
 " }}}
 
@@ -100,7 +104,7 @@ function! PhpCreateSettersAndGetters() " {{{
     for l:property in l:properties
         let l:camelCaseName = substitute(l:property, '^_\?\(.\)', '\U\1', '')
         if g:vim_php_refactoring_auto_validate_sg == 0
-			call s:PhpEchoError('Create set' . l:camelCaseName . '() and get' . l:camelCaseName . '()')
+            call s:PhpEchoError('Create set' . l:camelCaseName . '() and get' . l:camelCaseName . '()')
             if inputlist(["0. No", "1. Yes"]) == 0
                 continue
             endif
@@ -119,9 +123,11 @@ function! PhpRenameLocalVariable() " {{{
     let l:oldName = substitute(expand('<cword>'), '^\$*', '', '')
     let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
     if s:PhpSearchInCurrentFunction('$' . l:newName . '\>', 'n') > 0
-        call s:PhpEchoError('$' . l:newName . ' seems to already exist in the current function scope. Replace anyway ?')
-        if inputlist(["0. No", "1. Yes"]) == 0
-            return
+        if g:vim_php_refactoring_auto_validate_rename == 0
+            call s:PhpEchoError('$' . l:newName . ' seems to already exist in the current function scope. Rename anyway ?')
+            if inputlist(["0. No", "1. Yes"]) == 0
+                return
+            endif
         endif
     endif
     call s:PhpReplaceInCurrentFunction('$' . l:oldName . '\>', '$' . l:newName)
@@ -132,9 +138,11 @@ function! PhpRenameClassVariable() " {{{
     let l:oldName = expand('<cword>')
     let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
     if s:PhpSearchInCurrentClass('\%(\%(\%(public\|protected\|private\|static\)\_s\+\)\+\$\|$this->\)\@<=' . l:newName . '\>', 'n') > 0
-        call s:PhpEchoError(l:newName . ' seems to already exist in the current class. Replace anyway ?')
-        if inputlist(["0. No", "1. Yes"]) == 0
-            return
+        if g:vim_php_refactoring_auto_validate_rename == 0
+            call s:PhpEchoError(l:newName . ' seems to already exist in the current class. Rename anyway ?')
+            if inputlist(["0. No", "1. Yes"]) == 0
+                return
+            endif
         endif
     endif
     call s:PhpReplaceInCurrentClass('\%(\%(\%(public\|protected\|private\|static\)\_s\+\)\+\$\|$this->\)\@<=' . l:oldName . '\>', l:newName)
@@ -145,9 +153,11 @@ function! PhpRenameMethod() " {{{
     let l:oldName = expand('<cword>')
     let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
     if s:PhpSearchInCurrentClass('\%(\%(' . s:php_regex_func_line . '\)\|$this->\)\@<=' . l:newName . '\>', 'n') > 0
-        call s:PhpEchoError(l:newName . ' seems to already exist in the current class. Replace anyway ?')
-        if inputlist(["0. No", "1. Yes"]) == 0
-            return
+        if g:vim_php_refactoring_auto_validate_rename == 0
+            call s:PhpEchoError(l:newName . ' seems to already exist in the current class. Rename anyway ?')
+            if inputlist(["0. No", "1. Yes"]) == 0
+                return
+            endif
         endif
     endif
     call s:PhpReplaceInCurrentClass('\%(\%(' . s:php_regex_func_line . '\)\|$this->\)\@<=' . l:oldName . '\>', l:newName)
