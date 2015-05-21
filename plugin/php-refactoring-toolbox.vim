@@ -4,7 +4,7 @@
 " Maintainer: Pierrick Charron <pierrick@adoy.net>
 " URL: https://github.com/adoy/vim-php-refactoring-toolbox
 " License: MIT
-" Version: 1.0.2
+" Version: 1.0.3
 "
 
 " Config {{{
@@ -19,6 +19,10 @@ endif
 
 if !exists('g:vim_php_refactoring_auto_validate')
     let g:vim_php_refactoring_auto_validate = 0
+endif
+
+if !exists('g:vim_php_refactoring_auto_validate_sg')
+	let g:vim_php_refactoring_auto_validate_sg = g:vim_php_refactoring_auto_validate
 endif
 " }}}
 
@@ -95,8 +99,8 @@ function! PhpCreateSettersAndGetters() " {{{
     endwhile
     for l:property in l:properties
         let l:camelCaseName = substitute(l:property, '^_\?\(.\)', '\U\1', '')
-        call s:PhpEchoError('Create set' . l:camelCaseName . '() and get' . l:camelCaseName . '()')
-        if g:vim_php_refactoring_auto_validate == 0
+        if g:vim_php_refactoring_auto_validate_sg == 0
+			call s:PhpEchoError('Create set' . l:camelCaseName . '() and get' . l:camelCaseName . '()')
             if inputlist(["0. No", "1. Yes"]) == 0
                 continue
             endif
