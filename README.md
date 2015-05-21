@@ -41,6 +41,17 @@ If you want to disable the user validation for all rename features, just add thi
 let g:vim_php_refactoring_auto_validate_rename = 1
 ```
 
+If you want to disable the user validation for the visibility (private/public) add this line in your `~/.vimrc` file
+```
+let g:vim_php_refactoring_auto_validate_visibility = 1
+```
+
+To change the default visibility add one/both of those lines in your `~/.vimrc` file
+```
+let g:vim_php_refactoring_default_property_visibility = 'private'
+let g:vim_php_refactoring_default_method_visibility = 'private'
+```
+
 
 ## Default Mappings
 

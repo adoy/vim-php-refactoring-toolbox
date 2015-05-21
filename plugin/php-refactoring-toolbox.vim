@@ -28,6 +28,18 @@ endif
 if !exists('g:vim_php_refactoring_auto_validate_rename')
     let g:vim_php_refactoring_auto_validate_rename = g:vim_php_refactoring_auto_validate
 endif
+
+if !exists('g:vim_php_refactoring_auto_validate_visibility')
+    let g:vim_php_refactoring_ask_visibility = g:vim_php_refactoring_auto_validate
+endif
+
+if !exists('g:vim_php_refactoring_default_property_visibility')
+    let g:vim_php_refactoring_default_property_visibility = 'private'
+endif
+
+if !exists('g:vim_php_refactoring_default_method_visibility')
+    let g:vim_php_refactoring_default_method_visibility = 'private'
+endif
 " }}}
 
 " Refactoring mapping {{{
@@ -79,7 +91,7 @@ function! PhpDocAll() " {{{
         return
     endif
     normal magg
-    while search(s:php_regex_class_line, 'eW') > 0 
+    while search(s:php_regex_class_line, 'eW') > 0
         call s:PhpDocument()
     endwhile
     normal gg
@@ -201,9 +213,13 @@ function! PhpExtractClassProperty() " {{{
     normal mr
     let l:name = expand('<cword>')
     call s:PhpReplaceInCurrentFunction('$' . l:name . '\>', '$this->' . l:name)
-    let l:visibility = inputdialog("Visibility (default is private): ")
-    if empty(l:visibility)
-        let l:visibility =  'private'
+    if g:vim_php_refactoring_auto_validate_visibility == 0
+        let l:visibility = inputdialog("Visibility (default is " . g:vim_php_refactoring_default_property_visibility . "): ")
+        if empty(l:visibility)
+            let l:visibility =  g:vim_php_refactoring_default_property_visibility
+        endif
+    else
+        let l:visibility =  g:vim_php_refactoring_default_property_visibility
     endif
     call s:PhpInsertProperty(l:name, l:visibility)
     normal `r
@@ -216,9 +232,13 @@ function! PhpExtractMethod() range " {{{
         return
     endif
     let l:name = inputdialog("Name of new method: ")
-    let l:visibility = inputdialog("Visibility (default is private): ")
-    if empty(l:visibility)
-        let l:visibility =  'private'
+    if g:vim_php_refactoring_auto_validate_visibility == 0
+        let l:visibility = inputdialog("Visibility (default is " . g:vim_php_refactoring_default_method_visibility . "): ")
+        if empty(l:visibility)
+            let l:visibility =  g:vim_php_refactoring_default_method_visibility
+        endif
+    else
+        let l:visibility =  g:vim_php_refactoring_default_method_visibility
     endif
     normal gv"xdmr
     let l:middleLine = line('.')
@@ -265,9 +285,13 @@ endfunction
 
 function! PhpCreateProperty() " {{{
     let l:name = inputdialog("Name of new property: ")
-    let l:visibility = inputdialog("Visibility (default is private): ")
-    if empty(l:visibility)
-        let l:visibility =  'private'
+    if g:vim_php_refactoring_auto_validate_visibility == 0
+        let l:visibility = inputdialog("Visibility (default is " . g:vim_php_refactoring_default_property_visibility . "): ")
+        if empty(l:visibility)
+            let l:visibility =  g:vim_php_refactoring_default_property_visibility
+        endif
+    else
+        let l:visibility =  g:vim_php_refactoring_default_property_visibility
     endif
     call s:PhpInsertProperty(l:name, l:visibility)
 endfunction
@@ -391,10 +415,10 @@ function! s:PhpInsertProperty(name, visibility) " {{{
         if match(l:line, s:php_regex_class_line) > -1
             call search('{', 'W')
             call s:PhpInsertPropertyExtended(a:name, a:visibility, line('.'), 0)
-        else 
+        else
             call s:PhpInsertPropertyExtended(a:name, a:visibility, line('.'), 1)
         endif
-    else 
+    else
         call s:PhpInsertPropertyExtended(a:name, a:visibility, line('.'), 0)
     endif
 endfunction
