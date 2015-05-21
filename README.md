@@ -29,6 +29,12 @@ If you want to disable the default mapping just add this line in your `~/.vimrc`
 let g:vim_php_refactoring_use_default_mapping = 0
 ```
 
+If you want to disable the user validation at the getter/setter creation, just add this line in your `~/.vimrc` file
+
+```
+let g:vim_php_refactoring_auto_validate_sg = 1
+```
+
 ## Default Mappings
 
     nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<CR>
