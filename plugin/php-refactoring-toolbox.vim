@@ -46,8 +46,8 @@ endif
 if g:vim_php_refactoring_use_default_mapping == 1
     nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<CR>
     nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<CR>
-    nnoremap <unique> <Leader>rm :call PhpRenameMethod()<CR>
     nnoremap <unique> <Leader>eu :call PhpExtractUse()<CR>
+    nnoremap <unique> <Leader>rm :call PhpRenameMethod()<CR>
     vnoremap <unique> <Leader>ec :call PhpExtractConst()<CR>
     nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<CR>
     vnoremap <unique> <Leader>em :call PhpExtractMethod()<CR>
@@ -147,7 +147,7 @@ endfunction
 " }}}
 
 function! PhpRenameClassVariable() " {{{
-    let l:oldName = expand('<cword>')
+    let l:oldName = substitute(expand('<cword>'), '^\$*', '', '')
     let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
     if s:PhpSearchInCurrentClass('\%(\%(\%(public\|protected\|private\|static\)\_s\+\)\+\$\|$this->\)\@<=' . l:newName . '\>', 'n') > 0
         if g:vim_php_refactoring_auto_validate_rename == 0
@@ -162,7 +162,7 @@ endfunction
 " }}}
 
 function! PhpRenameMethod() " {{{
-    let l:oldName = expand('<cword>')
+    let l:oldName = substitute(expand('<cword>'), '^\$*', '', '')
     let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
     if s:PhpSearchInCurrentClass('\%(\%(' . s:php_regex_func_line . '\)\|$this->\)\@<=' . l:newName . '\>', 'n') > 0
         if g:vim_php_refactoring_auto_validate_rename == 0
@@ -211,7 +211,7 @@ endfunction
 
 function! PhpExtractClassProperty() " {{{
     normal mr
-    let l:name = expand('<cword>')
+    let l:name = substitute(expand('<cword>'), '^\$*', '', '')
     call s:PhpReplaceInCurrentFunction('$' . l:name . '\>', '$this->' . l:name)
     if g:vim_php_refactoring_auto_validate_visibility == 0
         let l:visibility = inputdialog("Visibility (default is " . g:vim_php_refactoring_default_property_visibility . "): ")
