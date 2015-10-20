@@ -30,7 +30,7 @@ if !exists('g:vim_php_refactoring_auto_validate_rename')
 endif
 
 if !exists('g:vim_php_refactoring_auto_validate_visibility')
-    let g:vim_php_refactoring_ask_visibility = g:vim_php_refactoring_auto_validate
+    let g:vim_php_refactoring_auto_validate_visibility = g:vim_php_refactoring_auto_validate
 endif
 
 if !exists('g:vim_php_refactoring_default_property_visibility')
