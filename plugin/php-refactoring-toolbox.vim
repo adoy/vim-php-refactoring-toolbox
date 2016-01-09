@@ -77,7 +77,7 @@ let s:php_regex_use_line    = '^use\_s\+[\\_A-Za-z0-9]\+\%(\_s\+as\_s\+[_A-Za-z0
 let s:php_regex_class_line  = '^\%(\%(final\s\+\|abstract\s\+\)\?class\>\|trait\>\)'
 let s:php_regex_const_line  = '^\s*const\s\+[^;]\+;'
 let s:php_regex_member_line = '^\s*\%(\%(private\|protected\|public\|static\)\s*\)\+\$'
-let s:php_regex_func_line   = '^\s*\%(\%(private\|protected\|public\|static\|abtsract\)\s*\)*function\_s\+'
+let s:php_regex_func_line   = '^\s*\%(\%(private\|protected\|public\|static\|abstract\)\s*\)*function\_s\+'
 
 let s:php_regex_local_var   = '\$\<\%(this\>\)\@![A-Za-z0-9]*'
 let s:php_regex_assignment  = '+=\|-=\|*=\|/=\|=\~\|!=\|='
