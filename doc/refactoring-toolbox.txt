@@ -1,0 +1,367 @@
+*refactoring-toolbox*       
+
+__________        _____               __               .__                 ___________           .__ ___.                 
+\______   \ _____/ ____\____    _____/  |_  ___________|__| ____    ____   \__    ___/___   ____ |  |\_ |__   _______  ___
+ |       _// __ \   __\\__  \ _/ ___\   __\/  _ \_  __ \  |/    \  / ___\    |    | /  _ \ /  _ \|  | | __ \ /  _ \  \/  /
+ |    |   \  ___/|  |   / __ \\  \___|  | (  <_> )  | \/  |   |  \/ /_/  >   |    |(  <_> |  <_> )  |_| \_\ (  <_> >    < 
+ |____|_  /\___  >__|  (____  /\___  >__|  \____/|__|  |__|___|  /\___  /    |____| \____/ \____/|____/___  /\____/__/\_ \
+        \/     \/           \/     \/                          \//_____/                                  \/            \/
+
+===============================================================================
+CONTENTS                                                       *refactoring-toolbox-contents*
+
+    1. Intro........................................|refactoring-toolbox-intro|
+    2. Mappings.....................................|refactoring-toolbox-mappings|
+    2. Examples.....................................|refactoring-toolbox-examples|
+    2. Playground...................................|refactoring-toolbox-playground|
+
+===============================================================================
+INTRO                                                             *refactoring-toolbox-intro*
+
+Vim PHP Refactoring ToolBox.
+
+A set of commands which help you to refactor PHP code.
+
+===============================================================================
+Default Mappings                                                         *refactoring-toolbox-mappings*
+
+nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<CR>
+nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<CR>
+nnoremap <unique> <Leader>rm :call PhpRenameMethod()<CR>
+nnoremap <unique> <Leader>eu :call PhpExtractUse()<CR>
+vnoremap <unique> <Leader>ec :call PhpExtractConst()<CR>
+nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<CR>
+vnoremap <unique> <Leader>em :call PhpExtractMethod()<CR>
+nnoremap <unique> <Leader>np :call PhpCreateProperty()<CR>
+nnoremap <unique> <Leader>du :call PhpDetectUnusedUseStatements()<CR>
+vnoremap <unique> <Leader>== :call PhpAlignAssigns()<CR>
+nnoremap <unique> <Leader>sg :call PhpCreateSettersAndGetters()<CR>
+nnoremap <unique> <Leader>da :call PhpDocAll()<CR>
+
+===============================================================================
+Examples                                                         *refactoring-toolbox-examples*
+
+1. Rename Local Variable........................................|rename-local-variable|
+2. Rename Class Variable........................................|rename-class-variable|
+3. Rename Method................................................|rename-method|
+4. Extract Use Statement........................................|extract-use-statement|
+5. Extract Class Property.......................................|extract-class-property|
+6. Extract Method...............................................|extract-method|
+7. Create Property..............................................|create-property|
+8. Detect Unused Use Statements.................................|detect-unused-use|
+9. Align assignments............................................|align-assignments|
+10. Create Setters and Getters..................................|create-set-get|
+11. Document all................................................|document-all|
+
+Note: ↑ Is the position of your cursor
+
+===============================================================================
+Rename Local Variable                                   *rename-local-variable*
+
+<?php
+function helloWorld($foobar = null) {
+    echo "Hello " . $foobar;
+}                      ↑
+
+<Leader>rlv in normal mode, specify the new $name
+
+<?php
+function helloWorld($name = null) {
+    echo "Hello " . $name;
+}                      ↑
+
+===============================================================================
+Rename Class Variable                                   *rename-class-variable*
+
+<?php
+class HelloWorld {
+    private $foobar;
+    public function __construct($name) {
+        $this->foobar = $name;
+    }
+    public function sayHello() {
+        echo $this->foobar;
+    }                 ↑
+}
+
+<Leader>rcv in normal mode, specify the new $name
+
+<?php
+class HelloWorld {
+    private $name;
+    public function __construct($name) {
+        $this->name = $name;
+    }
+    public function sayHello() {
+        echo $this->name;
+    }
+}
+
+===============================================================================
+Rename method                                   *rename-method*
+
+<?php
+class HelloWorld {
+    public function sayHello() {
+        echo $this->sayHello();
+    }                 ↑
+}
+
+<Leader>rm in normal mode, specify the new method name
+
+<?php
+class HelloWorld {
+    public function newMethodName() {
+        echo $this->newMethodName();
+    }                 ↑
+}
+
+===============================================================================
+Extract Use Statement                                   *extract-use-statement*
+
+<?php
+$obj1 = new Foo\Bar\Baz;
+$obj2 = new Foo\Bar\Baz;
+↑
+
+<Leader>eu in normal mode
+
+<?php
+
+use Foo\Bar\Baz;
+
+$obj1 = Baz;
+$obj2 = Baz;
+
+===============================================================================
+Extract Class Property                                   *extract-class-property*
+
+<?php
+
+class Dir {
+    public function __construct($path) {
+        $realpath = $path;
+    }       ↑
+}
+
+<Leader>ep in normal mode will extract the local variable and create a property inside the current class.
+
+<?php
+
+class Dir {
+    private $realpath;
+    public function __construct($path) {
+        $this->realpath = $path;
+    }       ↑
+}
+
+===============================================================================
+Extract Method                                   *extract-method*
+
+<?php
+
+class HelloWorld {
+    public function sayHello($firstName = null) {
+        $sentence = 'Hello';
+        if ($firstName) {
+            $sentence .= ' ' . $firstName;
+        }
+        echo $sentence;
+    }
+}
+
+Select in visual mode (V) the code you want to extract in an other method and hit <Leader>em. You'll be prompted for a method name. Enter a method name and press enter
+
+<?php
+
+class HelloWorld {
+    public function sayHello($firstName = null) {
+        $sentence = $this->prepareSentence($firstName);
+        echo $sentence;
+    }
+
+    private function prepareSentence($firstName)
+    {
+        $sentence = 'Hello';
+        if ($firstName) {
+            $sentence .= ' ' . $firstName;
+        }
+        return $sentence;
+    }
+}
+
+===============================================================================
+Create Property                                   *create-property*
+
+<Leader>np will create a new property in your current class.
+
+===============================================================================
+Detect unused "use" statements                     *detect-unused-use*
+
+
+<Leader>du will detect all unused "use" statements in your code so that you can remove them.
+
+===============================================================================
+Align assignments                                  *align-assignments*
+
+
+<?php
+
+$oneVar = 'Foo';
+$anOtherVar = 'Bar';
+$oneVar += 'Baz';
+
+Select the code you want to align and then hit <Leader>==
+
+<?php
+
+$oneVar     =  'Foo';
+$anOtherVar =  'Bar';
+$oneVar     += 'Baz';
+
+===============================================================================
+Create setters and getters                                   *create-set-get*
+
+
+<?php
+
+class Foo {
+    private $bar;
+}
+
+Hit <Leader>sg and you'll be prompted if you want to create setters and getters for existing properties.
+
+<?php
+
+class Foo {
+    private $bar;
+
+    public function setBar($bar)
+    {
+        $this->bar = $bar;
+    }
+
+    public function getBar()
+    {
+        return $this->bar;
+    }
+}
+
+===============================================================================
+Document all                                                  *document-all*
+
+<Leader>da will call your documentation plugin (by default Php Documentor for vim https://github.com/tobyS/pdv) for every uncommented classes, methods, functions and properties.
+
+===============================================================================
+Playground                                                         *refactoring-toolbox-playground*
+
+Here you have some code within you can try some of the available tools:
+
+<?php
+namespace AdoY\PHP\Refactoring\Toolbox;
+use I\Am\Really\Useless as NobodyLovesMe;
+use I\Am\Usefull as Lover;
+class Playground
+{
+    private $renameMe = 10;
+    /**
+     * Place your cursor on a local variable and press <Leader>rlv
+     * to rename a function local variable
+     */
+    public function testRenameLocalVariable($renameMe)
+    {
+        $renameMe = 'renameMe will be renamed';
+        $renameMeAlso = $renameMe;
+        $this->renameMe = 'If will be renamed in the next test';
+    }
+    /**
+     * Place your cursor on a class variable and press <Leader>rcv
+     * to rename a property (class variable)
+     */
+    public function testRenameClassVariable($renameMe)
+    {
+        $this->renameMe = 'RenameMe rename every usage of this property in the current class';
+        $renameMe = 'I\'m not renamed';
+    }
+    /**
+     * Place your cursor on a method name and press <Leader>rm
+     * to rename a method
+     */
+    public function testRenameMethod()
+    {
+        $this->testRenameMethod();
+    }
+    /**
+     * Place your cursor on a Fully qualified class name and press <Leader>eu
+     * to create an alias and place the new Use statement on top of the file
+     */
+    public function testExtractUse(\Fully\Qualified\Classname $obj)
+    {
+        if (!$obj instanceof \Fully\Qualified\Classname) {
+            Throw new Exception('$obj is not a \Fully\Qualified\Classname');
+        }
+        return new \Fully\Qualified\AnOtherClassname;
+    }
+    /**
+     * Select the content you want to place in the content with the visual mode
+     * (you could use viw on int or va' on string)
+     * and then press <Leader>ec to create a constant and replace every occurence of this
+     * by the constant usage
+     */
+    public function testExtractConst()
+    {
+        $dix = 1001;
+        $string = 'FOOBAR';
+    }
+    /**
+     * Place your cursor on the "localVariableWanabeAClassVariable" variable
+     * and press <Leader>ep to promote this variable as class property
+     */
+    public function testExtractClassProperty($newval)
+    {
+        $localVariableWanabeAClassVariable = $newval;
+    }
+    /**
+     * Select different block of code and extract it to different methods using
+     * <Leader>em
+     */
+    public function testExtractMethod($message)
+    {
+        // Make a very cool wave with the message
+        for ($i = 0; $i < strlen($message); $i++) {
+            $message[$i] = $i % 2 ? strtoupper($message[$i]) : strtolower($message[$i]);
+        }
+        // Put the message in a fancy box
+        $borderTopAndBottom = '+' . str_repeat('=', strlen($message)+2) . '+';
+        $newMessage = $borderTopAndBottom . PHP_EOL;
+        $newMessage .= '| ' . $message . ' |' . PHP_EOL;
+        $newMessage .= $borderTopAndBottom . PHP_EOL;
+        return $newMessage;
+    }
+    /**
+     * Press <Leader>np to create a property
+     */
+    public function testCreateNewProperty()
+    {
+        $this->notCreated;
+    }
+    /**
+     * Press <Leader>du to detect unused use statements
+     */
+    public function testDetectUnusedStatements()
+    {
+        new Lover;
+    }
+    /**
+     * Select the inner function block
+     * and press <Leader>== to align all assignements
+     */
+    public function testAlignAssigns()
+    {
+        $oneVar = 'Foo';
+        $anOtherVar = 'Bar';
+        $oneVar += 'Baz';
+    }
+}
+
+
