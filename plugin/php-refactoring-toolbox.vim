@@ -7,6 +7,11 @@
 " Version: 1.0.2
 "
 
+if exists('g:vim_php_refactoring_loaded')
+    finish
+endif
+let g:vim_php_refactoring_loaded = 1
+
 " Config {{{
 " VIM function to call to document the current line
 if !exists('g:vim_php_refactoring_phpdoc')
