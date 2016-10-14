@@ -87,7 +87,7 @@ let s:php_regex_func_line   = '^\s*\%(\%(private\|protected\|public\|static\|abs
 let s:php_regex_local_var   = '\$\<\%(this\>\)\@![A-Za-z0-9]*'
 let s:php_regex_assignment  = '+=\|-=\|*=\|/=\|=\~\|!=\|='
 let s:php_regex_fqcn        = '[\\_A-Za-z0-9]*'
-let s:php_regex_cn          = '[_A-Za-z0-9]\+$'
+let s:php_regex_cn          = '[_A-Za-z0-9]\+'
 " }}}
 
 function! PhpDocAll() " {{{
@@ -453,12 +453,12 @@ function! s:PhpGetFQCNUnderCursor() " {{{
     let l:line = getbufline("%", line('.'))[0]
     let l:lineStart = strpart(l:line, 0, col('.'))
     let l:lineEnd   = strpart(l:line, col('.'), strlen(l:line) - col('.'))
-    return matchstr(l:lineStart, s:php_regex_fqcn . '$') . matchstr(l:lineEnd, '^' . s:php_regex_fqcn)
+    return matchstr(l:lineStart, s:php_regex_fqcn . '$') . matchstr(l:lineEnd, '^' . s:php_regex_cn)
 endfunction
 " }}}
 
 function! s:PhpGetShortClassName(fqcn) " {{{
-    return matchstr(a:fqcn, s:php_regex_cn)
+    return matchstr(a:fqcn, s:php_regex_cn . '$')
 endfunction
 " }}}
 
