@@ -279,6 +279,8 @@ class Foo {
     public function setBar($bar)
     {
         $this->bar = $bar;
+
+        return $this; // If you opted for a fluent setter at the prompt.
     }
 
     public function getBar()
