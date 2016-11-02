@@ -1,9 +1,9 @@
-*refactoring-toolbox*       
+*refactoring-toolbox*
 
-__________        _____               __               .__                 ___________           .__ ___.                 
+__________        _____               __               .__                 ___________           .__ ___.
 \______   \ _____/ ____\____    _____/  |_  ___________|__| ____    ____   \__    ___/___   ____ |  |\_ |__   _______  ___
  |       _// __ \   __\\__  \ _/ ___\   __\/  _ \_  __ \  |/    \  / ___\    |    | /  _ \ /  _ \|  | | __ \ /  _ \  \/  /
- |    |   \  ___/|  |   / __ \\  \___|  | (  <_> )  | \/  |   |  \/ /_/  >   |    |(  <_> |  <_> )  |_| \_\ (  <_> >    < 
+ |    |   \  ___/|  |   / __ \\  \___|  | (  <_> )  | \/  |   |  \/ /_/  >   |    |(  <_> |  <_> )  |_| \_\ (  <_> >    <
  |____|_  /\___  >__|  (____  /\___  >__|  \____/|__|  |__|___|  /\___  /    |____| \____/ \____/|____/___  /\____/__/\_ \
         \/     \/           \/     \/                          \//_____/                                  \/            \/
 
@@ -229,7 +229,7 @@ class Foo {
     private $bar;
 }
 
-Hit <Leader>sg and you'll be prompted if you want to create setters and getters for existing properties.
+Hit `<Leader>sg` and you'll be prompted if you want to create setters and getters for existing properties and if you want to make the setter fluent.
 
 <?php
 

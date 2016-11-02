@@ -128,6 +128,10 @@ function! PhpCreateSettersAndGetters() " {{{
         endif
         if search(s:php_regex_func_line . "set" . l:camelCaseName . '\>', 'n') == 0
             call s:PhpInsertMethod("public", "set" . l:camelCaseName, ['$' . substitute(l:property, '^_', '', '') ], "$this->" . l:property . " = $" . substitute(l:property, '^_', '', '') . ";\n")
+            call s:PhpEchoError('Make fluent?')
+            if inputlist(["0. No", "1. Yes"]) == 1
+                exec "normal! jo\<CR>return $this;"
+            endif
         endif
         if search(s:php_regex_func_line . "get" . l:camelCaseName . '\>', 'n') == 0
             call s:PhpInsertMethod("public", "get" . l:camelCaseName, [], "return $this->" . l:property . ";\n")

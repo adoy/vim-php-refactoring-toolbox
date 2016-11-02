@@ -268,7 +268,7 @@ class Foo {
 }
 ```
 
-Hit `<Leader>sg` and you'll be prompted if you want to create setters and getters for existing properties.
+Hit `<Leader>sg` and you'll be prompted if you want to create setters and getters for existing properties and if you want to make the setter fluent.
 
 ``` php
 <?php
