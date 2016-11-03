@@ -45,6 +45,10 @@ endif
 if !exists('g:vim_php_refactoring_default_method_visibility')
     let g:vim_php_refactoring_default_method_visibility = 'private'
 endif
+
+if !exists('g:vim_php_refactoring_make_setter_fluent')
+    let g:vim_php_refactoring_make_setter_fluent = 0
+endif
 " }}}
 
 " Refactoring mapping {{{
@@ -90,6 +94,10 @@ let s:php_regex_fqcn        = '[\\_A-Za-z0-9]*'
 let s:php_regex_cn          = '[_A-Za-z0-9]\+'
 " }}}
 
+" Fluent {{{
+let s:php_fluent_this = "normal! jo\<CR>return $this;"
+" }}}
+
 function! PhpDocAll() " {{{
     if exists("*" . g:vim_php_refactoring_phpdoc) == 0
         call s:PhpEchoError(g:vim_php_refactoring_phpdoc . '() vim function doesn''t exists.')
@@ -128,9 +136,8 @@ function! PhpCreateSettersAndGetters() " {{{
         endif
         if search(s:php_regex_func_line . "set" . l:camelCaseName . '\>', 'n') == 0
             call s:PhpInsertMethod("public", "set" . l:camelCaseName, ['$' . substitute(l:property, '^_', '', '') ], "$this->" . l:property . " = $" . substitute(l:property, '^_', '', '') . ";\n")
-            call s:PhpEchoError('Make fluent?')
-            if inputlist(["0. No", "1. Yes"]) == 1
-                exec "normal! jo\<CR>return $this;"
+            if g:vim_php_refactoring_make_setter_fluent > 0
+                call s:PhpInsertFluent()
             endif
         endif
         if search(s:php_regex_func_line . "get" . l:camelCaseName . '\>', 'n') == 0
@@ -527,5 +534,19 @@ function! s:PhpEchoError(message) " {{{
     echohl ErrorMsg
     echomsg a:message
     echohl NONE
+endfunction
+" }}}
+
+function! s:PhpInsertFluent() " {{{
+    if g:vim_php_refactoring_make_setter_fluent == 1
+        exec s:php_fluent_this
+    elseif g:vim_php_refactoring_make_setter_fluent == 2
+        call s:PhpEchoError('Make fluent?')
+        if inputlist(["0. No", "1. Yes"]) == 1
+            exec s:php_fluent_this
+        endif
+    else
+        echoerr 'Invalid option for g:vim_php_refactoring_make_setter_fluent'
+    endif
 endfunction
 " }}}

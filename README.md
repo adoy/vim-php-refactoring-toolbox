@@ -52,6 +52,17 @@ let g:vim_php_refactoring_default_property_visibility = 'private'
 let g:vim_php_refactoring_default_method_visibility = 'private'
 ```
 
+To enable fluent setters add either of these lines to your `~/.vimrc` file
+```
+" default is 0 -- disabled
+
+" to enable for all setters
+let g:vim_php_refactoring_fluent_setter = 1
+
+" to enable but be prompted when creating the setter
+let g:vim_php_refactoring_fluent_setter = 2
+```
+
 
 ## Default Mappings
 
