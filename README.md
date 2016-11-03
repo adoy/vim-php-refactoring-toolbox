@@ -52,6 +52,17 @@ let g:vim_php_refactoring_default_property_visibility = 'private'
 let g:vim_php_refactoring_default_method_visibility = 'private'
 ```
 
+To enable fluent setters add either of these lines to your `~/.vimrc` file
+```
+" default is 0 -- disabled
+
+" to enable for all setters
+let g:vim_php_refactoring_fluent_setter = 1
+
+" to enable but be prompted when creating the setter
+let g:vim_php_refactoring_fluent_setter = 2
+```
+
 
 ## Default Mappings
 
@@ -268,7 +279,7 @@ class Foo {
 }
 ```
 
-Hit `<Leader>sg` and you'll be prompted if you want to create setters and getters for existing properties.
+Hit `<Leader>sg` and you'll be prompted if you want to create setters and getters for existing properties and if you want to make the setter fluent.
 
 ``` php
 <?php
@@ -279,6 +290,8 @@ class Foo {
     public function setBar($bar)
     {
         $this->bar = $bar;
+
+        return $this; // If you opted for a fluent setter at the prompt.
     }
 
     public function getBar()
