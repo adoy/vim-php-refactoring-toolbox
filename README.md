@@ -35,6 +35,12 @@ If you want to disable the user validation at the getter/setter creation, just a
 let g:vim_php_refactoring_auto_validate_sg = 1
 ```
 
+If you want to disable the user validation at getter only creation, just add this line in your `~/.vimrc` file
+
+```
+let g:vim_php_refactoring_auto_validate_g = 1
+```
+
 If you want to disable the user validation for all rename features, just add this line in your  `~/.vimrc` file
 
 ```
@@ -77,6 +83,7 @@ let g:vim_php_refactoring_fluent_setter = 2
     nnoremap <unique> <Leader>du :call PhpDetectUnusedUseStatements()<CR>
     vnoremap <unique> <Leader>== :call PhpAlignAssigns()<CR>
     nnoremap <unique> <Leader>sg :call PhpCreateSettersAndGetters()<CR>
+    nnoremap <unique> <Leader>cog :call PhpCreateGetters()<CR>
     nnoremap <unique> <Leader>da :call PhpDocAll()<CR>
 
 ## Playground.php
@@ -293,6 +300,31 @@ class Foo {
 
         return $this; // If you opted for a fluent setter at the prompt.
     }
+
+    public function getBar()
+    {
+        return $this->bar;
+    }
+}
+```
+
+### Create only getters
+
+``` php
+<?php
+
+class Foo {
+    private $bar;
+}
+```
+
+Hit `<Leader>cog` and you will be prompted if you want only getters for existing properties
+
+``` php
+<?php
+
+class Foo {
+    private $bar;
 
     public function getBar()
     {

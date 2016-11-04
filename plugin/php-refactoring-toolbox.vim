@@ -30,6 +30,10 @@ if !exists('g:vim_php_refactoring_auto_validate_sg')
     let g:vim_php_refactoring_auto_validate_sg = g:vim_php_refactoring_auto_validate
 endif
 
+if !exists('g:vim_php_refactoring_auto_validate_g')
+    let g:vim_php_refactoring_auto_validate_g = g:vim_php_refactoring_auto_validate
+endif
+
 if !exists('g:vim_php_refactoring_auto_validate_rename')
     let g:vim_php_refactoring_auto_validate_rename = g:vim_php_refactoring_auto_validate
 endif
@@ -64,6 +68,7 @@ if g:vim_php_refactoring_use_default_mapping == 1
     nnoremap <unique> <Leader>du :call PhpDetectUnusedUseStatements()<CR>
     vnoremap <unique> <Leader>== :call PhpAlignAssigns()<CR>
     nnoremap <unique> <Leader>sg :call PhpCreateSettersAndGetters()<CR>
+    nnoremap <unique> <Leader>cog :call PhpCreateGetters()<CR>
     nnoremap <unique> <Leader>da :call PhpDocAll()<CR>
 endif
 " }}}
@@ -116,6 +121,28 @@ function! PhpDocAll() " {{{
         call s:PhpDocument()
     endwhile
     normal `a
+endfunction
+" }}}
+
+function! PhpCreateGetters() " {{{
+    normal gg
+    let l:properties = []
+    while search(s:php_regex_member_line, 'eW') > 0
+        normal w"xye
+        call add(l:properties, @x)
+    endwhile
+    for l:property in l:properties
+        let l:camelCaseName = substitute(l:property, '^_\?\(.\)', '\U\1', '')
+        if g:vim_php_refactoring_auto_validate_g == 0
+            call s:PhpEchoError('Create get' . l:camelCaseName . '()')
+            if inputlist(["0. No", "1. Yes"]) == 0
+                continue
+            endif
+        endif
+        if search(s:php_regex_func_line . "get" . l:camelCaseName . '\>', 'n') == 0
+            call s:PhpInsertMethod("public", "get" . l:camelCaseName, [], "return $this->" . l:property . ";\n")
+        endif
+    endfor
 endfunction
 " }}}
 
