@@ -17,7 +17,7 @@ class Playground
     {
         $renameMe = 'renameMe will be renamed';
         $renameMeAlso = $renameMe;
-        $this->renameMe = 'If will be renamed in the next test';
+        $this->renameMe = 'I will be renamed in the next test';
     }
 
     /**
