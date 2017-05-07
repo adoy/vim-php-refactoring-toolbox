@@ -108,27 +108,27 @@ function! PhpDocAll() " {{{
         call s:PhpEchoError(g:vim_php_refactoring_phpdoc . '() vim function doesn''t exists.')
         return
     endif
-    normal magg
+    normal! magg
     while search(s:php_regex_class_line, 'eW') > 0
         call s:PhpDocument()
     endwhile
-    normal gg
+    normal! gg
     while search(s:php_regex_member_line, 'eW') > 0
         call s:PhpDocument()
     endwhile
-    normal gg
+    normal! gg
     while search(s:php_regex_func_line, 'eW') > 0
         call s:PhpDocument()
     endwhile
-    normal `a
+    normal! `a
 endfunction
 " }}}
 
 function! PhpCreateGetters() " {{{
-    normal gg
+    normal! gg
     let l:properties = []
     while search(s:php_regex_member_line, 'eW') > 0
-        normal w"xye
+        normal! w"xye
         call add(l:properties, @x)
     endwhile
     for l:property in l:properties
@@ -147,10 +147,10 @@ endfunction
 " }}}
 
 function! PhpCreateSettersAndGetters() " {{{
-    normal gg
+    normal! gg
     let l:properties = []
     while search(s:php_regex_member_line, 'eW') > 0
-        normal w"xye
+        normal! w"xye
         call add(l:properties, @x)
     endwhile
     for l:property in l:properties
@@ -220,7 +220,7 @@ endfunction
 " }}}
 
 function! PhpExtractUse() " {{{
-    normal mr
+    normal! mr
     let l:fqcn = s:PhpGetFQCNUnderCursor()
     let l:use  = s:PhpGetDefaultUse(l:fqcn)
     let l:defaultUse = l:use
@@ -235,7 +235,7 @@ function! PhpExtractUse() " {{{
     else
         call s:PhpInsertUseStatement(l:fqcn)
     endif
-    normal `r
+    normal! `r
 endfunction
 " }}}
 
@@ -245,15 +245,15 @@ function! PhpExtractConst() " {{{
         return
     endif
     let l:name = toupper(inputdialog("Name of new const: "))
-    normal mrgv"xy
+    normal! mrgv"xy
     call s:PhpReplaceInCurrentClass(@x, 'self::' . l:name)
     call s:PhpInsertConst(l:name, @x)
-    normal `r
+    normal! `r
 endfunction
 " }}}
 
 function! PhpExtractClassProperty() " {{{
-    normal mr
+    normal! mr
     let l:name = substitute(expand('<cword>'), '^\$*', '', '')
     call s:PhpReplaceInCurrentFunction('$' . l:name . '\>', '$this->' . l:name)
     if g:vim_php_refactoring_auto_validate_visibility == 0
@@ -265,7 +265,7 @@ function! PhpExtractClassProperty() " {{{
         let l:visibility =  g:vim_php_refactoring_default_property_visibility
     endif
     call s:PhpInsertProperty(l:name, l:visibility)
-    normal `r
+    normal! `r
 endfunction
 " }}}
 
@@ -283,12 +283,12 @@ function! PhpExtractMethod() range " {{{
     else
         let l:visibility =  g:vim_php_refactoring_default_method_visibility
     endif
-    normal gv"xdmr
+    normal! gv"xdmr
     let l:middleLine = line('.')
     call search(s:php_regex_func_line, 'bW')
     let l:startLine = line('.')
     call search('(', 'W')
-    normal "pyi(
+    normal! "pyi(
     call search('{', 'W')
     exec "normal! %"
     let l:stopLine = line('.')
@@ -310,7 +310,7 @@ function! PhpExtractMethod() range " {{{
             call add(l:output, l:var)
         endif
     endfor
-    normal `r
+    normal! `r
     if len(l:output) == 0
         exec "normal! O$this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>k=3="
         let l:return = ''
@@ -322,7 +322,7 @@ function! PhpExtractMethod() range " {{{
         let l:return = "return array(" . join(l:output, ", ") . ");\<CR>"
     endif
     call s:PhpInsertMethod(l:visibility, l:name, l:parametersSignature, @x . l:return)
-    normal `r
+    normal! `r
 endfunction
 " }}}
 
@@ -341,7 +341,7 @@ endfunction
 " }}}
 
 function! PhpDetectUnusedUseStatements() " {{{
-    normal mrgg
+    normal! mrgg
     while search('^use', 'W')
         let l:startLine = line('.')
         call search(';\_s*', 'eW')
@@ -355,7 +355,7 @@ function! PhpDetectUnusedUseStatements() " {{{
             endif
         endfor
     endwhile
-    normal `r
+    normal! `r
 endfunction
 " }}}
 
@@ -390,34 +390,34 @@ endfunction
 
 function! s:PhpDocument() " {{{
     if match(getline(line('.')-1), "*/") == -1
-        normal mr
+        normal! mr
         exec "call " . g:vim_php_refactoring_phpdoc . '()'
-        normal `r
+        normal! `r
     endif
 endfunction
 " }}}
 
 function! s:PhpReplaceInCurrentFunction(search, replace) " {{{
-    normal mr
+    normal! mr
     call search(s:php_regex_func_line, 'bW')
     let l:startLine = line('.')
     call search('{', 'W')
     exec "normal! %"
     let l:stopLine = line('.')
     exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. a:replace .'/ge'
-    normal `r
+    normal! `r
 endfunction
 " }}}
 
 function! s:PhpReplaceInCurrentClass(search, replace) " {{{
-    normal mr
+    normal! mr
     call search(s:php_regex_class_line, 'beW')
     call search('{', 'W')
     let l:startLine = line('.')
     exec "normal! %"
     let l:stopLine = line('.')
     exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. a:replace .'/ge'
-    normal `r
+    normal! `r
 endfunction
 " }}}
 
@@ -447,7 +447,7 @@ function! s:PhpInsertConst(name, value) " {{{
     else
         call append(line('.'), 'const ' . a:name . ' = ' . a:value . ';')
     endif
-    normal j=1=
+    normal! j=1=
 endfunction
 " }}}
 
@@ -475,7 +475,7 @@ function! s:PhpInsertPropertyExtended(name, visibility, insertLine, emptyLineBef
     call append(a:insertLine + a:emptyLineBefore + 1, '* @var mixed')
     call append(a:insertLine + a:emptyLineBefore + 2, '*/')
     call append(a:insertLine + a:emptyLineBefore + 3, a:visibility . " $" . a:name . ';')
-    normal j=5=
+    normal! j=5=
 endfunction
 " }}}
 
@@ -515,25 +515,25 @@ endfunction
 " }}}
 
 function! s:PhpSearchInCurrentFunction(pattern, flags) " {{{
-    normal mr
+    normal! mr
     call search(s:php_regex_func_line, 'bW')
     let l:startLine = line('.')
     call search('{', 'W')
     exec "normal! %"
     let l:stopLine = line('.')
-    normal `r
+    normal! `r
     return s:PhpSearchInRange(a:pattern, a:flags, l:startLine, l:stopLine)
 endfunction
 " }}}
 
 function! s:PhpSearchInCurrentClass(pattern, flags) " {{{
-    normal mr
+    normal! mr
     call search(s:php_regex_class_line, 'beW')
     call search('{', 'W')
     let l:startLine = line('.')
     exec "normal! %"
     let l:stopLine = line('.')
-    normal `r
+    normal! `r
     return s:PhpSearchInRange(a:pattern, a:flags, l:startLine, l:stopLine)
 endfunction
 " }}}
