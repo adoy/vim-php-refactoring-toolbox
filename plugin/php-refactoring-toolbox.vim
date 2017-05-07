@@ -4,7 +4,7 @@
 " Maintainer: Pierrick Charron <pierrick@adoy.net>
 " URL: https://github.com/adoy/vim-php-refactoring-toolbox
 " License: MIT
-" Version: 1.0.2
+" Version: 1.0.3
 "
 
 if exists('g:vim_php_refactoring_loaded')
