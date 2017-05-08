@@ -70,6 +70,7 @@ if g:vim_php_refactoring_use_default_mapping == 1
     nnoremap <unique> <Leader>sg :call PhpCreateSettersAndGetters()<CR>
     nnoremap <unique> <Leader>cog :call PhpCreateGetters()<CR>
     nnoremap <unique> <Leader>da :call PhpDocAll()<CR>
+    nnoremap <unique> <C-r> :call Menu()<CR>
 endif
 " }}}
 
@@ -102,6 +103,24 @@ let s:php_regex_cn          = '[_A-Za-z0-9]\+'
 " Fluent {{{
 let s:php_fluent_this = "normal! jo\<CR>return $this;"
 " }}}
+
+" Menu positions {{{
+let s:menu_positions = {
+   \"Rename local variable":"PhpRenameLocalVariable", 
+   \"Rename class variable":"PhpRenameClassVariable",
+   \"Extract use":"PhpExtractUse",
+   \"Rename method":"PhpRenameMethod",
+   \"Extract const":"PhpExtractConst",
+   \"Extract class property":"PhpExtractClassProperty",
+   \"Extract method":"PhpExtractMethod",
+   \"Create property":"PhpCreateProperty",
+   \"Detect unused use statements":"PhpDetectUnusedUseStatements",
+   \"Align asigns":"PhpAlignAssigns",
+   \"Create setters and getters":"PhpCreateSettersAndGetters",
+   \"Create getters":"PhpCreateGetters",
+   \"Doc all":"PhpDocAll",
+\}
+"}}}
 
 function! PhpDocAll() " {{{
     if exists("*" . g:vim_php_refactoring_phpdoc) == 0
@@ -574,6 +593,27 @@ function! s:PhpInsertFluent() " {{{
         endif
     else
         echoerr 'Invalid option for g:vim_php_refactoring_make_setter_fluent'
+    endif
+endfunction
+" }}}
+
+" }}}
+function! Menu() " {{{
+    echohl 'PHP refactoring toolbox'
+    echo 'Select refactor type:'
+    echohl None
+    let index = 1 
+    for key in keys(s:menu_positions)
+        echom printf("%d. %s",index, key)
+        let index += 1
+    endfor
+    let choice = str2nr(inputdialog('Choice: '))
+    if choice < 0 && choice > len(keys(s:menu_positions)) 
+        let Function = function(get(s:menu_positions, keys(s:menu_positions)[choice-1]), [])
+        call Function()
+    else
+        echo "\r"
+        call s:PhpEchoError("Invalid choice")
     endif
 endfunction
 " }}}
