@@ -246,7 +246,7 @@ function! PhpExtractConst() " {{{
     endif
     let l:name = toupper(inputdialog("Name of new const: "))
     normal! mrgv"xy
-    call s:PhpReplaceInCurrentClass(@x, 'self::' . l:name)
+    call s:PhpReplaceInCurrentClass('\V' . escape(@x, '\\/'), 'self::' . l:name)
     call s:PhpInsertConst(l:name, @x)
     normal! `r
 endfunction
