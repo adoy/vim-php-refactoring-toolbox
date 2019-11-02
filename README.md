@@ -1,5 +1,7 @@
 # VIM Php Refactoring Toolbox
 
+[![License: MIT](https://img.shields.io/github/license/adoy/vim-php-refactoring-toolbox)](https://opensource.org/licenses/MIT)
+
 PHP Refactoring Toolbox for VIM
 
 * Rename Local Variable
