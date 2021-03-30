@@ -90,7 +90,7 @@ let s:php_regex_ns_line     = '^namespace\_s\+[\\_A-Za-z0-9]*\_s*[;{]'
 let s:php_regex_use_line    = '^use\_s\+[\\_A-Za-z0-9]\+\%(\_s\+as\_s\+[_A-Za-z0-9]\+\)\?\_s*\%(,\_s\+[\\_A-Za-z0-9]\+\%(\_s\+as\_s\+[_A-Za-z0-9]\+\)\?\_s*\)*;'
 let s:php_regex_class_line  = '^\%(\%(final\s\+\|abstract\s\+\)\?class\>\|trait\>\)'
 let s:php_regex_const_line  = '^\s*const\s\+[^;]\+;'
-let s:php_regex_member_line = '^\s*\%(\%(private\|protected\|public\|static\)\s*\)\+\$'
+let s:php_regex_member_line = '^\s*\%(\%(private\|protected\|public\|static\)\%(\_s\+?\?[\\|_A-Za-z0-9]\+\)\?\s*\)\+\$'
 let s:php_regex_func_line   = '^\s*\%(\%(private\|protected\|public\|static\|abstract\)\s*\)*function\_s\+'
 
 let s:php_regex_local_var   = '\$\<\%(this\>\)\@![A-Za-z0-9]*'
@@ -193,14 +193,14 @@ function! PhpRenameClassVariable() " {{{
     let l:oldName = substitute(expand('<cword>'), '^\$*', '', '')
     let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
     if g:vim_php_refactoring_auto_validate_rename == 0
-        if s:PhpSearchInCurrentClass('\C\%(\%(\%(public\|protected\|private\|static\)\_s\+\)\+\$\|$this->\)\@<=' . l:newName . '\>', 'n') > 0
+        if s:PhpSearchInCurrentClass('\C\%(\%(\%(public\|protected\|private\|static\)\%(\_s\+?\?[\\|_A-Za-z0-9]\+\)\?\_s\+\)\+\$\|$this->\)\@<=' . l:newName . '\>', 'n') > 0
             call s:PhpEchoError(l:newName . ' seems to already exist in the current class. Rename anyway ?')
             if inputlist(["0. No", "1. Yes"]) == 0
                 return
             endif
         endif
     endif
-    call s:PhpReplaceInCurrentClass('\C\%(\%(\%(public\|protected\|private\|static\)\_s\+\)\+\$\|$this->\)\@<=' . l:oldName . '\>', l:newName)
+    call s:PhpReplaceInCurrentClass('\C\%(\%(\%(public\|protected\|private\|static\)\%(\_s\+?\?[\\|_A-Za-z0-9]\+\)\?\_s\+\)\+\$\|$this->\)\@<=' . l:oldName . '\>', l:newName)
 endfunction
 " }}}
 
