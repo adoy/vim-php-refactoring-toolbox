@@ -53,6 +53,10 @@ endif
 if !exists('g:vim_php_refactoring_make_setter_fluent')
     let g:vim_php_refactoring_make_setter_fluent = 0
 endif
+
+if !exists('g:vim_php_refactoring_add_sg_types')
+    let g:vim_php_refactoring_add_sg_types = 0
+endif
 " }}}
 
 " Refactoring mapping {{{
@@ -125,52 +129,12 @@ endfunction
 " }}}
 
 function! PhpCreateGetters() " {{{
-    normal! gg
-    let l:properties = []
-    while search(s:php_regex_member_line, 'eW') > 0
-        normal! w"xye
-        call add(l:properties, @x)
-    endwhile
-    for l:property in l:properties
-        let l:camelCaseName = substitute(l:property, '^_\?\(.\)', '\U\1', '')
-        if g:vim_php_refactoring_auto_validate_g == 0
-            call s:PhpEchoError('Create get' . l:camelCaseName . '()')
-            if inputlist(["0. No", "1. Yes"]) == 0
-                continue
-            endif
-        endif
-        if search(s:php_regex_func_line . "get" . l:camelCaseName . '\>', 'n') == 0
-            call s:PhpInsertMethod("public", "get" . l:camelCaseName, [], "return $this->" . l:property . ";\n")
-        endif
-    endfor
+    call s:PhpCreateSettersOrGetters(1)
 endfunction
 " }}}
 
 function! PhpCreateSettersAndGetters() " {{{
-    normal! gg
-    let l:properties = []
-    while search(s:php_regex_member_line, 'eW') > 0
-        normal! w"xye
-        call add(l:properties, @x)
-    endwhile
-    for l:property in l:properties
-        let l:camelCaseName = substitute(l:property, '^_\?\(.\)', '\U\1', '')
-        if g:vim_php_refactoring_auto_validate_sg == 0
-            call s:PhpEchoError('Create set' . l:camelCaseName . '() and get' . l:camelCaseName . '()')
-            if inputlist(["0. No", "1. Yes"]) == 0
-                continue
-            endif
-        endif
-        if search(s:php_regex_func_line . "set" . l:camelCaseName . '\>', 'n') == 0
-            call s:PhpInsertMethod("public", "set" . l:camelCaseName, ['$' . substitute(l:property, '^_', '', '') ], "$this->" . l:property . " = $" . substitute(l:property, '^_', '', '') . ";\n")
-            if g:vim_php_refactoring_make_setter_fluent > 0
-                call s:PhpInsertFluent()
-            endif
-        endif
-        if search(s:php_regex_func_line . "get" . l:camelCaseName . '\>', 'n') == 0
-            call s:PhpInsertMethod("public", "get" . l:camelCaseName, [], "return $this->" . l:property . ";\n")
-        endif
-    endfor
+    call s:PhpCreateSettersOrGetters(0)
 endfunction
 " }}}
 
@@ -388,6 +352,84 @@ function! PhpAlignAssigns() range " {{{
 endfunction
 " }}}
 
+function! s:PhpCreateSettersOrGetters(create_only_getters) " {{{
+    normal! gg
+    let l:auto_validate = a:create_only_getters ? g:vim_php_refactoring_auto_validate_g : g:vim_php_refactoring_auto_validate_sg
+    let l:propertiesMaps = []
+    while search(s:php_regex_member_line, 'eW') > 0
+        " get property name
+        normal! w"xye
+
+        let l:property = @x
+        let l:type_hint = ''
+        let l:type_comment = ''
+
+        if g:vim_php_refactoring_add_sg_types
+            let l:line_matches = matchlist(getline(line('.')), '\v(public|protected|private)\s+([^$]+)\s+\$')
+            let l:type_hint = len(l:line_matches) > 2 ? l:line_matches[2] : ''
+
+            let l:parent_line_trimmed = trim(getline(line('.') - 1))
+            let l:parent_line_has_comment = l:parent_line_trimmed == '*/'
+
+            if l:parent_line_has_comment
+                let l:runned_lines = 0
+                let l:current_line_nr = line('.') - 2
+                let l:current_line_text = getline(l:current_line_nr)
+
+                while stridx(l:current_line_text, '*') >= 0 && l:runned_lines < 10 && l:current_line_nr > 0
+                    " iterate over comments (bottom up)
+                    let l:comment_matches = matchlist(l:current_line_text, '\v\@var\s+(.+)')
+
+                    let l:type_comment = len(l:comment_matches) > 0 ? trim(l:comment_matches[1]) : '' 
+
+                    if l:type_comment != ''
+                        break
+                    endif
+
+                    let l:runned_lines = l:runned_lines + 1
+                    let l:current_line_nr = l:current_line_nr - 1
+                    let l:current_line_text = getline(l:current_line_nr)
+                endwhile
+            endif
+        endif
+
+        call add(l:propertiesMaps, {
+        \   'property': @x,
+        \   'type_hint': l:type_hint,
+        \   'type_comment': l:type_comment,
+        \ })
+    endwhile
+    for l:propertyMap in l:propertiesMaps
+        let l:property = l:propertyMap['property']
+        let l:type_hint = l:propertyMap['type_hint']
+        let l:type_comment = l:propertyMap['type_comment']
+
+        let l:camelCaseName = substitute(l:property, '^_\?\(.\)', '\U\1', '')
+        if l:auto_validate == 0
+            call s:PhpEchoError(a:create_only_getters ? 'Create get' . l:camelCaseName . '()' : 'Create set' . l:camelCaseName . '() and get' . l:camelCaseName . '()')
+            if inputlist(["0. No", "1. Yes"]) == 0
+                continue
+            endif
+        endif
+        if !a:create_only_getters && search(s:php_regex_func_line . "set" . l:camelCaseName . '\>', 'n') == 0
+            call s:PhpInsertMethod("public", "set" . l:camelCaseName, ['$' . substitute(l:property, '^_', '', '') ], "$this->" . l:property . " = $" . substitute(l:property, '^_', '', '') . ";\n")
+            if g:vim_php_refactoring_add_sg_types > 0
+                call s:PhpInsertTypes(l:property, l:type_hint, l:type_comment)
+            endif
+            if g:vim_php_refactoring_make_setter_fluent > 0
+                call s:PhpInsertFluent()
+            endif
+        endif
+        if search(s:php_regex_func_line . "get" . l:camelCaseName . '\>', 'n') == 0
+            call s:PhpInsertMethod("public", "get" . l:camelCaseName, [], "return $this->" . l:property . ";\n")
+            if g:vim_php_refactoring_add_sg_types > 0
+                call s:PhpInsertTypes(l:property, l:type_hint, l:type_comment)
+            endif
+        endif
+    endfor
+endfunction
+" }}}
+
 function! s:PhpDocument() " {{{
     if match(getline(line('.')-1), "*/") == -1
         normal! mr
@@ -575,5 +617,46 @@ function! s:PhpInsertFluent() " {{{
     else
         echoerr 'Invalid option for g:vim_php_refactoring_make_setter_fluent'
     endif
+endfunction
+" }}}
+
+function! s:PhpInsertTypes(property_name, type_hint, type_comment) " {{{
+    " expected to be called right after PhpInsertMethod
+
+    " backup position
+    normal mx
+    normal k
+
+    let l:line_text = getline(line('.'))
+
+    let l:type_hint = trim(a:type_hint)
+    let l:type_comment = trim(a:type_comment)
+    let l:is_setter = stridx(l:line_text, '$') > 0
+
+    if trim(l:type_hint) != ''
+        if l:is_setter
+            " setter
+            exec "normal! _f$i" . l:type_hint . " \<Esc>"
+
+            if g:vim_php_refactoring_make_setter_fluent == 1
+                exec "normal! $a: self\<Esc>"
+            endif
+        else
+            " getter
+            exec "normal! $a: " . l:type_hint . "\<Esc>"
+        endif
+    endif
+
+    if trim(l:type_comment) != ''
+        normal `x
+        if l:is_setter
+            exec "normal! kO/**\<Esc>o@param " . a:type_comment . " $" . a:property_name ."\<CR>/\<Esc>"
+        else
+            exec "normal! kO/**\<Esc>o@return " . a:type_comment . "\<CR>/\<Esc>"
+        endif
+    endif
+
+    " return to position
+    normal `x
 endfunction
 " }}}
