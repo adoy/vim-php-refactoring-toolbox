@@ -55,7 +55,7 @@ if !exists('g:vim_php_refactoring_make_setter_fluent')
 endif
 
 if !exists('g:vim_php_refactoring_add_sg_types')
-    let g:vim_php_refactoring_add_sg_types = 0
+    let g:vim_php_refactoring_add_sg_types = 1
 endif
 " }}}
 
