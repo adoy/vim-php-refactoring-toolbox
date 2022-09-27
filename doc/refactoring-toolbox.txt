@@ -30,6 +30,7 @@ nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<CR>
 nnoremap <unique> <Leader>rm :call PhpRenameMethod()<CR>
 nnoremap <unique> <Leader>eu :call PhpExtractUse()<CR>
 vnoremap <unique> <Leader>ec :call PhpExtractConst()<CR>
+vnoremap <unique> <Leader>ev :call PhpExtractVariable()<CR>
 nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<CR>
 vnoremap <unique> <Leader>em :call PhpExtractMethod()<CR>
 nnoremap <unique> <Leader>np :call PhpCreateProperty()<CR>
@@ -47,11 +48,12 @@ Examples                                                         *refactoring-to
 4. Extract Use Statement........................................|extract-use-statement|
 5. Extract Class Property.......................................|extract-class-property|
 6. Extract Method...............................................|extract-method|
-7. Create Property..............................................|create-property|
-8. Detect Unused Use Statements.................................|detect-unused-use|
-9. Align assignments............................................|align-assignments|
-10. Create Setters and Getters..................................|create-set-get|
-11. Document all................................................|document-all|
+7. Extract Variable.............................................|extract-variable|
+8. Create Property..............................................|create-property|
+9. Detect Unused Use Statements.................................|detect-unused-use|
+10. Align assignments...........................................|align-assignments|
+11. Create Setters and Getters..................................|create-set-get|
+12. Document all................................................|document-all|
 
 Note: ↑ Is the position of your cursor
 
@@ -191,7 +193,41 @@ class HelloWorld {
 }
 
 ===============================================================================
-Create Property                                   *create-property*
+Extract Variable                                   *extract-variable*
+
+<?php
+
+class HelloWorld {
+    private function prepareSentence($firstName)
+    {
+        $sentence = 'Hello';
+        if ('foo' === $firstName) {
+            $sentence .= ' ' . $firstName;
+        }
+        return $sentence;
+    }
+}
+
+Select in visual mode (V) the code you want to extract in a variable and hit `<Leader>ev`.
+You'll be prompted for a variable name. Enter a variable name and press enter
+
+<?php
+
+class HelloWorld {
+    private function prepareSentence($firstName)
+    {
+        $sentence = 'Hello';
+        $firstNameIsValid = 'foo' === $firstName;
+
+        if ($firstNameIsValid) {
+            $sentence .= ' ' . $firstName;
+        }
+        return $sentence;
+    }
+}
+
+===============================================================================
+Create Property                                    *create-property*
 
 <Leader>np will create a new property in your current class.
 

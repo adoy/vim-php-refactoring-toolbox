@@ -62,6 +62,7 @@ if g:vim_php_refactoring_use_default_mapping == 1
     nnoremap <unique> <Leader>eu :call PhpExtractUse()<CR>
     nnoremap <unique> <Leader>rm :call PhpRenameMethod()<CR>
     vnoremap <unique> <Leader>ec :call PhpExtractConst()<CR>
+    vnoremap <unique> <Leader>ev :call PhpExtractVariable()<CR>
     nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<CR>
     vnoremap <unique> <Leader>em :call PhpExtractMethod()<CR>
     nnoremap <unique> <Leader>np :call PhpCreateProperty()<CR>
@@ -248,6 +249,34 @@ function! PhpExtractConst() " {{{
     normal! mrgv"xy
     call s:PhpReplaceInCurrentClass(@x, 'self::' . l:name)
     call s:PhpInsertConst(l:name, @x)
+    normal! `r
+endfunction
+" }}}
+
+function! PhpExtractVariable() " {{{
+    if visualmode() != 'v'
+        call s:PhpEchoError('Extract variable only works in Visual mode, not in Visual Line or Visual block')
+        return
+    endif
+    let l:name = inputdialog("Name of new variable: ")
+    " go to select and copy and delete
+    normal! gvx
+    " add marker
+    normal! mr
+    " type variable name
+    exec 'normal! i$'.l:name
+    " go to start on selection
+    normal! `r
+    let l:indentChars = indent(line('.'))
+    " got to line to write assignment
+    normal! O
+    " type variable assignment
+    exec 'normal! i'.repeat(' ', l:indentChars).'$'.l:name.' = '
+    " paste selection
+    normal! pa;
+    " add empty line after assignment
+    normal! o
+    " go to start on selection
     normal! `r
 endfunction
 " }}}
