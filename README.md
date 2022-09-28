@@ -261,6 +261,7 @@ class HelloWorld {
     private function prepareSentence($firstName)
     {
         $sentence = 'Hello';
+
         if ('foo' === $firstName) {
             $sentence .= ' ' . $firstName;
         }
@@ -279,6 +280,7 @@ class HelloWorld {
     private function prepareSentence($firstName)
     {
         $sentence = 'Hello';
+
         $firstNameIsValid = 'foo' === $firstName;
 
         if ($firstNameIsValid) {

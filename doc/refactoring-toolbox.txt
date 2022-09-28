@@ -217,6 +217,7 @@ class HelloWorld {
     private function prepareSentence($firstName)
     {
         $sentence = 'Hello';
+
         $firstNameIsValid = 'foo' === $firstName;
 
         if ($firstNameIsValid) {
