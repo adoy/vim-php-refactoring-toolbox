@@ -381,3 +381,12 @@ class Foo {
 `<Leader>da` will call your documentation plugin (by default Php Documentor for vim https://github.com/tobyS/pdv) for every uncommented classes, methods, functions and properties.
 
 
+## Running tests
+
+```
+bin/test
+```
+
+### How to write tests?
+
+See https://github.com/junegunn/vader.vim
