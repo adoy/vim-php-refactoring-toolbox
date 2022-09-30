@@ -259,7 +259,7 @@ function! PhpExtractVariable() " {{{
         return
     endif
     let l:name = inputdialog("Name of new variable: ")
-    let l:lineForAssignment = inputdialog("Line of assignment: ")
+    let l:lineUpwardForAssignment = inputdialog("Line upward for assignment: ")
     " go to select and copy and delete
     normal! gvx
     " add marker
@@ -269,7 +269,7 @@ function! PhpExtractVariable() " {{{
     " go to start on selection
     normal! `r
     " go to line to write assignment
-    exec 'normal! '.l:lineForAssignment.'gg'
+    exec 'normal! '.l:lineUpwardForAssignment.'gk'
     let l:indentChars = indent(line('.'))
     normal! o
     " type variable assignment
