@@ -1,25 +1,17 @@
 Given php (condition on if):
   <?php
 
-  $sentence = 'Hello';
-
-  if ('foo' === $firstName) {
-      $sentence .= ' ' . $firstName;
-  }
+  'Hello';
 
 Do (select the condition and extract variable):
-  /foo\<CR>
-  vi(
+  /Hello\<CR>
+  va'
   ;ev
-  firstNameIsValid\<CR>
+  foo\<CR>
   \<CR>
 
 Expect php (variable is extracted):
   <?php
+  $foo = 'Hello';
 
-  $sentence = 'Hello';
-  $firstNameIsValid = 'foo' === $firstName;
-
-  if ($firstNameIsValid) {
-      $sentence .= ' ' . $firstName;
-  }
+  $foo;
