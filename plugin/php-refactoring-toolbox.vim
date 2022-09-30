@@ -280,7 +280,7 @@ function! PhpExtractVariable() " {{{
     normal! `r
 
     " go to line to write assignment
-    exec 'normal! '.l:lineUpwardForAssignment.'k'
+    call cursor(line('.') - l:lineUpwardForAssignment, 0)
     let l:tab = ''
     let l:indentChars = indent(line('.'))
     let l:needBlankLineAfter = v:false
