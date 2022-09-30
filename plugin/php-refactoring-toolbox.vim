@@ -280,15 +280,34 @@ function! PhpExtractVariable() " {{{
     normal! `r
 
     " go to line to write assignment
-    exec 'normal! '.l:lineUpwardForAssignment.'gk'
+    exec 'normal! '.l:lineUpwardForAssignment.'k'
+    let l:tab = ''
     let l:indentChars = indent(line('.'))
+    let l:needBlankLineAfter = v:false
+
+    if '{' == trim(getline(line('.')))
+        let l:currentLine = line('.')
+        let l:currentCol = col('.')
+
+        call cursor(line('.') + 1, 0)
+        let l:indentChars = indent(line('.'))
+
+        call cursor(l:currentLine, l:currentCol)
+
+        let l:needBlankLineAfter = v:true
+    endif
+
     normal! o
 
     " type variable assignment
-    exec 'normal! i'.repeat(' ', l:indentChars).'$'.l:name.' = '
+    exec 'normal! i'.repeat(' ', l:indentChars).l:tab.'$'.l:name.' = '
 
     " paste selection and add semi-colon
     normal! pa;
+
+    if l:needBlankLineAfter
+        normal! o
+    endif
 
     " go to start on selection
     normal! `r
