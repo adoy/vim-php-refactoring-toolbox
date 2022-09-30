@@ -28,4 +28,4 @@ installVader ()
 
 installVader
 
-vim -esNu test/fixtures/vimrc -c 'Vader! test/*'
+vim -esNu test/fixtures/vimrc -c 'Vader! test/**'
