@@ -10,10 +10,10 @@ Do:
   viw
   ;ev
   baz\<CR>
+  1\<CR>
 
 Expect:
   <?php
-
   $baz = 1234;
 
   $foo = [

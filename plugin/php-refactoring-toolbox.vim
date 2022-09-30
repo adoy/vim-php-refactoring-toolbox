@@ -259,6 +259,7 @@ function! PhpExtractVariable() " {{{
         return
     endif
     let l:name = inputdialog("Name of new variable: ")
+    let l:lineForAssignment = inputdialog("Line of assignment: ")
     " go to select and copy and delete
     normal! gvx
     " add marker
@@ -267,15 +268,14 @@ function! PhpExtractVariable() " {{{
     exec 'normal! i$'.l:name
     " go to start on selection
     normal! `r
-    let l:indentChars = indent(line('.'))
     " go to line to write assignment
-    normal! O
+    exec 'normal! '.l:lineForAssignment.'gg'
+    let l:indentChars = indent(line('.'))
+    normal! o
     " type variable assignment
     exec 'normal! i'.repeat(' ', l:indentChars).'$'.l:name.' = '
     " paste selection and add semi-colon
     normal! pa;
-    " add empty line after assignment
-    normal! o
     " go to start on selection
     normal! `r
 endfunction

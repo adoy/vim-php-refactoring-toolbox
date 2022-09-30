@@ -12,12 +12,12 @@ Do (select the condition and extract variable):
   vi(
   ;ev
   firstNameIsValid\<CR>
+  3\<CR>
 
 Expect php (variable is extracted):
   <?php
 
   $sentence = 'Hello';
-
   $firstNameIsValid = 'foo' === $firstName;
 
   if ($firstNameIsValid) {
