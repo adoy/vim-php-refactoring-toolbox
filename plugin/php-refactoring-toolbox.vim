@@ -258,28 +258,38 @@ function! PhpExtractVariable() " {{{
         call s:PhpEchoError('Extract variable only works in Visual mode, not in Visual Line or Visual block')
         return
     endif
+
+    " input
     let l:name = inputdialog('Name of new variable: ')
     let l:defaultUpwardMove = 2
     let l:lineUpwardForAssignment = inputdialog('Line upward for assignment (default is '.l:defaultUpwardMove.'): ')
     if empty(l:lineUpwardForAssignment)
         let l:lineUpwardForAssignment = l:defaultUpwardMove
     endif
+
     " go to select and copy and delete
     normal! gvx
+
     " add marker
     normal! mr
+
     " type variable name
     exec 'normal! i$'.l:name
+
     " go to start on selection
     normal! `r
+
     " go to line to write assignment
     exec 'normal! '.l:lineUpwardForAssignment.'gk'
     let l:indentChars = indent(line('.'))
     normal! o
+
     " type variable assignment
     exec 'normal! i'.repeat(' ', l:indentChars).'$'.l:name.' = '
+
     " paste selection and add semi-colon
     normal! pa;
+
     " go to start on selection
     normal! `r
 endfunction
