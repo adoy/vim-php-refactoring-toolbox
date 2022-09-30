@@ -268,11 +268,11 @@ function! PhpExtractVariable() " {{{
     " go to start on selection
     normal! `r
     let l:indentChars = indent(line('.'))
-    " got to line to write assignment
+    " go to line to write assignment
     normal! O
     " type variable assignment
     exec 'normal! i'.repeat(' ', l:indentChars).'$'.l:name.' = '
-    " paste selection
+    " paste selection and add semi-colon
     normal! pa;
     " add empty line after assignment
     normal! o

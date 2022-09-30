@@ -1,0 +1,21 @@
+Given php:
+  <?php
+
+  $foo = [
+    'bar' => 1234,
+  ];
+
+Do:
+  /1234\<CR>
+  viw
+  ;ev
+  baz\<CR>
+
+Expect:
+  <?php
+
+  $baz = 1234;
+
+  $foo = [
+    'bar' => $baz,
+  ];
