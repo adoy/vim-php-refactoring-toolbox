@@ -302,8 +302,9 @@ function! PhpExtractVariable() " {{{
 
     " type variable assignment
     let l:prefixAssign = repeat(' ', l:indentChars).'$'.l:name.' = '
-
     call append(line('.'), l:prefixAssign)
+
+    " move cursor at the after the equal sign
     call cursor(line('.') + 1, 0)
     normal! $
 
