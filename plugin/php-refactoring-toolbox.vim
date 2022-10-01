@@ -286,6 +286,13 @@ function! PhpExtractVariable() " {{{
     call cursor(line('.') - l:lineUpwardForAssignment, 0)
     let l:indentChars = indent(nextnonblank(line('.') + 1))
     let l:needBlankLineAfter = v:false
+    let l:currentLineContent = trim(getline(line('.')))
+
+    " line end with [
+    if '[' == l:currentLineContent[-1:]
+        " backward one line
+        call cursor(line('.') - 1, 0)
+    endif
 
     if '{' == trim(getline(line('.')))
         let l:currentLine = line('.')
