@@ -297,15 +297,22 @@ function! PhpExtractVariable() " {{{
         let l:needBlankLineAfter = v:true
     endif
 
-    normal! o
+    if 1 == l:lineUpwardForAssignment
+        let l:needBlankLineAfter = v:true
+    endif
 
     " type variable assignment
-    exec 'normal! i'.repeat(' ', l:indentChars).l:tab.'$'.l:name.' = '
+    let l:prefixAssign = repeat(' ', l:indentChars).l:tab.'$'.l:name.' = '
+
+    call append(line('.'), l:prefixAssign)
+    call cursor(line('.') + 1, 0)
+    normal! $
 
     " paste selection and add semi-colon
     normal! pa;
 
     if l:needBlankLineAfter
+        " call append(line('.') + 1, '')
         normal! o
     endif
 
