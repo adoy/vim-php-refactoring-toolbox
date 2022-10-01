@@ -261,7 +261,7 @@ function! PhpExtractVariable() " {{{
 
     " input
     let l:name = inputdialog('Name of new variable: ')
-    let l:defaultUpwardMove = 2
+    let l:defaultUpwardMove = 1
     let l:lineUpwardForAssignment = inputdialog('Not empty line upward for assignment (default is '.l:defaultUpwardMove.'): ')
     if empty(l:lineUpwardForAssignment)
         let l:lineUpwardForAssignment = l:defaultUpwardMove
