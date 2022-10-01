@@ -312,8 +312,7 @@ function! PhpExtractVariable() " {{{
     normal! pa;
 
     if l:needBlankLineAfter
-        " call append(line('.') + 1, '')
-        normal! o
+        call append(line('.'), '')
     endif
 
     " go to start on selection
