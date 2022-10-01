@@ -1,0 +1,22 @@
+Given php:
+  <?php
+
+  while (true) {
+      throw new Exception('Lorem ipsum dolor sit amet, consetetur.');
+  }
+
+Do:
+  /ipsum\<CR>
+  vi(
+  ;ev
+  foo\<CR>
+  \<CR>
+
+Expect:
+  <?php
+
+  while (true) {
+      $foo = 'Lorem ipsum dolor sit amet, consetetur.';
+
+      throw new Exception($foo);
+  }

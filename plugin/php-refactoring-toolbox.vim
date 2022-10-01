@@ -284,7 +284,7 @@ function! PhpExtractVariable() " {{{
 
     " go to line to write assignment
     call cursor(line('.') - l:lineUpwardForAssignment, 0)
-    let l:indentChars = indent(line('.'))
+    let l:indentChars = indent(nextnonblank(line('.') + 1))
     let l:needBlankLineAfter = v:false
 
     if '{' == trim(getline(line('.')))
