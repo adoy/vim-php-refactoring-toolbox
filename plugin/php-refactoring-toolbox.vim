@@ -279,6 +279,9 @@ function! PhpExtractVariable() " {{{
     " go to start on selection
     normal! `r
 
+    let l:startLine = line('.')
+    let l:startCol = col('.')
+
     " go to line to write assignment
     call cursor(line('.') - l:lineUpwardForAssignment, 0)
     let l:indentChars = indent(line('.'))
@@ -303,7 +306,9 @@ function! PhpExtractVariable() " {{{
         call cursor(nextnonblank(l:currentLine), 0)
         let l:indentChars = indent(line('.'))
 
-        call cursor(l:currentLine, l:currentCol)
+        call cursor(prevnonblank(l:currentLine), l:currentCol)
+
+        let l:lineUpwardForAssignment = l:currentLine - l:startLine
     endif
 
     if 1 == l:lineUpwardForAssignment
