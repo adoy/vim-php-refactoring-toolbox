@@ -288,10 +288,10 @@ function! PhpExtractVariable() " {{{
     let l:needBlankLineAfter = v:false
 
     " line end with ,
-    if ',' == trim(getline(line('.')))[-1:]
+    while ',' == trim(getline(line('.')))[-1:]
         " backward one line
         call cursor(line('.') - 1, 0)
-    endif
+    endwhile
 
     " line end with [
     if '[' == trim(getline(line('.')))[-1:]
