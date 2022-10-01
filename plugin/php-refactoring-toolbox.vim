@@ -281,7 +281,6 @@ function! PhpExtractVariable() " {{{
 
     " go to line to write assignment
     call cursor(line('.') - l:lineUpwardForAssignment, 0)
-    let l:tab = ''
     let l:indentChars = indent(line('.'))
     let l:needBlankLineAfter = v:false
 
@@ -302,7 +301,7 @@ function! PhpExtractVariable() " {{{
     endif
 
     " type variable assignment
-    let l:prefixAssign = repeat(' ', l:indentChars).l:tab.'$'.l:name.' = '
+    let l:prefixAssign = repeat(' ', l:indentChars).'$'.l:name.' = '
 
     call append(line('.'), l:prefixAssign)
     call cursor(line('.') + 1, 0)
