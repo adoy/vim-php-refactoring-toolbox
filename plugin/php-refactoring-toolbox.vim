@@ -296,6 +296,16 @@ function! PhpExtractVariable() " {{{
         let l:needBlankLineAfter = v:true
     endif
 
+    if empty(trim(getline(line('.'))))
+        let l:currentLine = line('.')
+        let l:currentCol = col('.')
+
+        call cursor(nextnonblank(l:currentLine), 0)
+        let l:indentChars = indent(line('.'))
+
+        call cursor(l:currentLine, l:currentCol)
+    endif
+
     if 1 == l:lineUpwardForAssignment
         let l:needBlankLineAfter = v:true
     endif
