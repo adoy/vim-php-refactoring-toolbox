@@ -287,28 +287,16 @@ function! PhpExtractVariable() " {{{
     let l:indentChars = indent(nextnonblank(line('.') + 1))
     let l:needBlankLineAfter = v:false
 
-    " line end with ,
+    " line ends with ,
     while ',' == trim(getline(line('.')))[-1:]
         " backward one line
         call cursor(line('.') - 1, 0)
     endwhile
 
-    " line end with [
+    " line ends with [
     if '[' == trim(getline(line('.')))[-1:]
         " backward one line
         call cursor(line('.') - 1, 0)
-    endif
-
-    if '{' == trim(getline(line('.')))
-        let l:currentLine = line('.')
-        let l:currentCol = col('.')
-
-        call cursor(line('.') + 1, 0)
-        let l:indentChars = indent(line('.'))
-
-        call cursor(l:currentLine, l:currentCol)
-
-        let l:needBlankLineAfter = v:true
     endif
 
     if empty(trim(getline(line('.'))))

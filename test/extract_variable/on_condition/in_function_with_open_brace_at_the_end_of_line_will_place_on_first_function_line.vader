@@ -1,0 +1,30 @@
+Given php (condition on if and on function):
+  <?php
+
+  function prepareSentence() {
+      if ('foo' === $firstName) {
+          $sentence .= ' ' . $firstName;
+      }
+
+      return $sentence;
+  }
+
+Do (select the condition and extract variable):
+  /foo\<CR>
+  vi(
+  ;ev
+  firstNameIsValid\<CR>
+  1\<CR>
+
+Expect php (variable is extracted):
+  <?php
+
+  function prepareSentence() {
+      $firstNameIsValid = 'foo' === $firstName;
+
+      if ($firstNameIsValid) {
+          $sentence .= ' ' . $firstName;
+      }
+
+      return $sentence;
+  }
