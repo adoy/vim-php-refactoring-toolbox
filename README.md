@@ -258,10 +258,8 @@ class HelloWorld {
 <?php
 
 class HelloWorld {
-    private function prepareSentence($firstName)
-    {
+    private function prepareSentence($firstName) {
         $sentence = 'Hello';
-
         if ('foo' === $firstName) {
             $sentence .= ' ' . $firstName;
         }
@@ -277,13 +275,11 @@ You'll be prompted for a variable name. Enter a variable name and press enter
 <?php
 
 class HelloWorld {
-    private function prepareSentence($firstName)
-    {
+    private function prepareSentence($firstName) {
         $sentence = 'Hello';
+        $shouldDisplayName = 'foo' === $firstName;
 
-        $firstNameIsValid = 'foo' === $firstName;
-
-        if ($firstNameIsValid) {
+        if ($shouldDisplayName) {
             $sentence .= ' ' . $firstName;
         }
         return $sentence;
