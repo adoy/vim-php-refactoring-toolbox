@@ -1,0 +1,25 @@
+Given php:
+  <?php
+
+  $sentence = 'Hello';
+
+  $foo = [
+      'bar' => 1234,
+  ];
+
+Do:
+  /1234\<CR>
+  viw
+  ;ev
+  baz\<CR>
+  3\<CR>
+
+Expect:
+  <?php
+
+  $sentence = 'Hello';
+  $baz = 1234;
+
+  $foo = [
+      'bar' => $baz,
+  ];

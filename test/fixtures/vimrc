@@ -1,0 +1,14 @@
+" Setup a testing environment that is isolated from the other plugins.
+"
+filetype off
+
+set rtp+=vendor/vader.vim
+set rtp+=.
+set rtp+=after
+
+filetype plugin on
+filetype indent on
+
+syntax enable
+
+let mapleader = ";"

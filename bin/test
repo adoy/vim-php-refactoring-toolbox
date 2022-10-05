@@ -1,0 +1,31 @@
+#! /bin/sh -eu
+
+installVader ()
+{
+    vaderdir='vendor/vader.vim'
+    vaderCommit='6fff477431ac3191c69a3a5e5f187925466e275a'
+
+    test -d "$vaderdir" || {
+        {
+            git clone \
+                --branch=master \
+                --single-branch \
+                https://github.com/junegunn/vader.vim.git \
+                "$vaderdir"
+
+            git \
+                --work-tree="$vaderdir" \
+                --git-dir="$vaderdir/.git" \
+                reset --hard \
+                "$vaderCommit" --
+        } || {
+            rm -rf "$vaderdir"
+
+            exit 1
+        }
+    }
+}
+
+installVader
+
+vim -esNu test/fixtures/vimrc -c 'Vader! test/**'

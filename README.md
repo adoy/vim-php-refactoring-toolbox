@@ -9,6 +9,7 @@ PHP Refactoring Toolbox for VIM
 * Rename Method
 * Extract Use
 * Extract Const
+* Extract Variable
 * Extract Class Property
 * Extract Method
 * Create Property
@@ -79,6 +80,7 @@ let g:vim_php_refactoring_make_setter_fluent = 2
     nnoremap <unique> <Leader>rm :call PhpRenameMethod()<CR>
     nnoremap <unique> <Leader>eu :call PhpExtractUse()<CR>
     vnoremap <unique> <Leader>ec :call PhpExtractConst()<CR>
+    vnoremap <unique> <Leader>ev :call PhpExtractVariable()<CR>
     nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<CR>
     vnoremap <unique> <Leader>em :call PhpExtractMethod()<CR>
     nnoremap <unique> <Leader>np :call PhpCreateProperty()<CR>
@@ -250,6 +252,41 @@ class HelloWorld {
 }
 ```
 
+### Extract Variable
+
+``` php
+<?php
+
+class HelloWorld {
+    private function prepareSentence($firstName) {
+        $sentence = 'Hello';
+        if ('foo' === $firstName) {
+            $sentence .= ' ' . $firstName;
+        }
+        return $sentence;
+    }
+}
+```
+
+Select in visual mode (V) the code you want to extract in a variable and hit `<Leader>ev`.
+You'll be prompted for a variable name. Enter a variable name and press enter
+
+``` php
+<?php
+
+class HelloWorld {
+    private function prepareSentence($firstName) {
+        $sentence = 'Hello';
+        $shouldDisplayName = 'foo' === $firstName;
+
+        if ($shouldDisplayName) {
+            $sentence .= ' ' . $firstName;
+        }
+        return $sentence;
+    }
+}
+```
+
 ### Create Property
 
 `<Leader>np` will create a new property in your current class.
@@ -340,3 +377,12 @@ class Foo {
 `<Leader>da` will call your documentation plugin (by default Php Documentor for vim https://github.com/tobyS/pdv) for every uncommented classes, methods, functions and properties.
 
 
+## Running tests
+
+```
+bin/test
+```
+
+### How to write tests?
+
+See https://github.com/junegunn/vader.vim

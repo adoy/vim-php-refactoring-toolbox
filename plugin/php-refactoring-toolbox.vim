@@ -62,6 +62,7 @@ if g:vim_php_refactoring_use_default_mapping == 1
     nnoremap <unique> <Leader>eu :call PhpExtractUse()<CR>
     nnoremap <unique> <Leader>rm :call PhpRenameMethod()<CR>
     vnoremap <unique> <Leader>ec :call PhpExtractConst()<CR>
+    vnoremap <unique> <Leader>ev :call PhpExtractVariable()<CR>
     nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<CR>
     vnoremap <unique> <Leader>em :call PhpExtractMethod()<CR>
     nnoremap <unique> <Leader>np :call PhpCreateProperty()<CR>
@@ -248,6 +249,88 @@ function! PhpExtractConst() " {{{
     normal! mrgv"xy
     call s:PhpReplaceInCurrentClass(@x, 'self::' . l:name)
     call s:PhpInsertConst(l:name, @x)
+    normal! `r
+endfunction
+" }}}
+
+function! PhpExtractVariable() " {{{
+    if visualmode() != 'v'
+        call s:PhpEchoError('Extract variable only works in Visual mode, not in Visual Line or Visual block')
+        return
+    endif
+
+    " input
+    let l:name = inputdialog('Name of new variable: ')
+    let l:defaultUpwardMove = 1
+    let l:lineUpwardForAssignment = inputdialog('Line upward for assignment (default is '.l:defaultUpwardMove.'): ')
+    if empty(l:lineUpwardForAssignment)
+        let l:lineUpwardForAssignment = l:defaultUpwardMove
+    endif
+
+    " go to select and copy and delete
+    normal! gvx
+
+    " add marker
+    normal! mr
+
+    " type variable name
+    exec 'normal! i$'.l:name
+
+    " go to start on selection
+    normal! `r
+
+    let l:startLine = line('.')
+    let l:startCol = col('.')
+
+    " go to line to write assignment
+    call cursor(line('.') - l:lineUpwardForAssignment, 0)
+    let l:indentChars = indent(nextnonblank(line('.') + 1))
+    let l:needBlankLineAfter = v:false
+
+    " line ends with ,
+    while ',' == trim(getline(line('.')))[-1:]
+        " backward one line
+        call cursor(line('.') - 1, 0)
+    endwhile
+
+    " line ends with [
+    if '[' == trim(getline(line('.')))[-1:]
+        " backward one line
+        call cursor(line('.') - 1, 0)
+    endif
+
+    if empty(trim(getline(line('.'))))
+        let l:currentLine = line('.')
+        let l:currentCol = col('.')
+
+        call cursor(nextnonblank(l:currentLine), 0)
+        let l:indentChars = indent(line('.'))
+
+        call cursor(prevnonblank(l:currentLine), l:currentCol)
+
+        let l:lineUpwardForAssignment = l:currentLine - l:startLine
+    endif
+
+    if 1 == l:lineUpwardForAssignment
+        let l:needBlankLineAfter = v:true
+    endif
+
+    " type variable assignment
+    let l:prefixAssign = repeat(' ', l:indentChars).'$'.l:name.' = '
+    call append(line('.'), l:prefixAssign)
+
+    " move cursor at the after the equal sign
+    call cursor(line('.') + 1, 0)
+    normal! $
+
+    " paste selection and add semi-colon
+    normal! pa;
+
+    if l:needBlankLineAfter
+        call append(line('.'), '')
+    endif
+
+    " go to start on selection
     normal! `r
 endfunction
 " }}}

@@ -64,6 +64,19 @@ class Playground
     }
 
     /**
+     * Select the content you want to place in the content with the visual mode
+     * (you could use viw on int or va' on string)
+     * and then press <Leader>ev to create a variable and replace every occurrences of this
+     * by the variable usage
+     */
+    public function testExtractVariable()
+    {
+        if (!$obj instanceof \Fully\Qualified\Classname) {
+            Throw new Exception('$obj is not a \Fully\Qualified\Classname');
+        }
+    }
+
+    /**
      * Place your cursor on the "localVariableWanabeAClassVariable" variable
      * and press <Leader>ep to promote this variable as class property
      */

@@ -1,0 +1,24 @@
+Given php (condition on if):
+  <?php
+
+  // hello
+  if ('foo' === $firstName) {
+      $sentence .= ' ' . $firstName;
+  }
+
+Do (select the condition and extract variable):
+  /foo\<CR>
+  vi(
+  ;ev
+  firstNameIsValid\<CR>
+  1\<CR>
+
+Expect php (variable is extracted):
+  <?php
+
+  // hello
+  $firstNameIsValid = 'foo' === $firstName;
+
+  if ($firstNameIsValid) {
+      $sentence .= ' ' . $firstName;
+  }
